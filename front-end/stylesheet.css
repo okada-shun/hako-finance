@@ -1,0 +1,90 @@
+body {
+  font-family: "Avenir Next";
+}
+
+ul {
+  padding-bottom: 20px;
+}
+
+li {
+  list-style: none;
+  font-size: 20px;
+}
+
+header {
+  height: 100px;
+  background-color: blanchedalmond;
+  margin: 20px;
+}
+
+.header-logo {
+  font-size: 50px;
+  text-align: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.container {
+  padding: 20px;
+}
+
+h1 {
+  font-size: 30px;
+  padding: 20px;
+}
+
+button {
+  background-color: chocolate;
+  margin-right: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 100px;
+  height:40px;
+}
+
+.transactions {
+  background-color: blanchedalmond;
+}
+
+.transaction {
+  padding: 30px;
+}
+
+.noCheckSentence {
+  color: red;
+}
+
+.okCheckSentence {
+  color: black;
+}
+
+.creditDebtInfo li {
+  font-size: 15px;
+  padding: 10px;
+  background-color:navajowhite;
+}
+
+#hakoInfo {
+  background-color: blanchedalmond;
+}
+
+#userInfo {
+  background-color: blanchedalmond;
+}
+
+.question {
+  margin: 10px;
+}
+
+.memberCheck {
+  color: red;
+}
+
+.duration {
+  width: 80px;
+}
+
+[v-cloak] {
+  display: none;
+}
+  
