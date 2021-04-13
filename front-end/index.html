@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Hako Prototype</title>
+    <link rel="stylesheet" href="stylesheet.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.9/web3.min.js"></script>
+    <script src="Hako_abi.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="header-logo">Hako Prototype</div>
+    </header>
+
+    <div class="container">
+    <div id="hakoInfo">
+      <h1>Hako Information</h1>
+      <ul>
+        <li v-cloak>Hako's address: {{hakoAddress}}</li>
+        <li v-cloak>Hako's balance of token: {{balanceOfHako}}</li>
+        <li v-cloak>Total supply of token: {{totalSupply}}</li>
+        <li v-show="isMember" v-cloak>Hako's credit to Members: {{creditOfHako}}</li>
+        <li v-show="isMember" v-cloak>Hako's debt to Members: {{debtOfHako}}</li>
+        <li v-show="isMember" v-cloak>Member Count: {{memberCount}}</li>
+      </ul>
+    </div>
+    <div id="userInfo">
+      <h1>User Infomation</h1>
+      <ul>
+        <li v-cloak>Your address: {{userAccount}}</li>
+        <li v-cloak>Your balance of token: {{userBalance}}</li>
+        <li><br></li>
+        <li class="memberCheck" v-cloak>{{memberCheckOfUser}}</li>
+        <li v-show="isMember" v-cloak>Your credit to Hako: {{creditToHakoOfUser}}</li>
+        <li v-show="isMember" v-cloak>Your debt to Hako: {{debtToHakoOfUser}}</li>
+        <li v-show="isMember" v-cloak>Your credit to Member: {{creditToMemberOfUser}}</li>
+        <li v-show="isMember" v-cloak>Your debt to Member: {{debtToMemberOfUser}}</li>
+        <li v-show="isMember" v-cloak>Your net assets: {{netAssetsOfUser}}</li>
+        <li v-show="isMember" v-cloak>Your borrow value: {{valueDuration.value}}</li>
+        <li v-show="isMember" v-cloak>Your borrow duration: {{valueDuration.duration}}</li>
+      </ul>
+    </div>
+    <div class="transactions">
+      <h1>Transactions</h1>
+      <div class="transaction" id="transfer">
+        <h2>transfer token</h2>
+        <p>Transfer your token to another account.</p>
+        to who? <input class="question" type="text" name="to" v-model="to"><br>
+        how much? <input class="question" type="text" name="value" v-model="value"><br>
+        <button class="button" @click="check">check</button>
+        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+        <button class="button" @click="transfer" v-show="ok && active">transfer token</button>
+      </div>
+
+      <div class="transaction" id="transferCredit" v-show="isMember">
+        <h2>transfer credit</h2>
+        <p>Transfer your credit to another member account.<br>
+          (You can't transfer your credit to the account that has debt to Hako.)</p>
+        to who? <input class="question" type="text" name="to" v-model="to"><br>
+        how much? <input class="question" type="text" name="value" v-model="value"><br>
+        <button class="button" @click="check">check</button>
+        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+        <button class="button" @click="transferCredit" v-show="ok && active">transfer credit</button>
+      </div>
+
+      <div class="transaction" id="joinHako" v-show="!isMember">
+        <h2>join Hako</h2>
+        <p>Join Hako by depositing some token to Hako.</p>
+        how much? <input class="question" type="text" name="value" v-model="value"><br>
+        <button class="button" @click="check">check</button>
+        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+        <button class="button" @click="joinHako" v-show="ok && active">join</button>
+      </div>
+
+      <div class="transaction" id="leaveHako" v-show="isMember && haveNotDebtToHako && haveNotDebtToMember && haveNotCreditToMember">
+        <h2>leave Hako</h2>
+        <p>Leave Hako. (All your credit returns to you.)</p>
+        <button class="button" @click="check">check</button>
+        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+        <button class="button" @click="leaveHako" v-show="ok && active">leave</button>
+      </div>
+
+      <div class="transaction" id="depositToken" v-show="isMember">
+        <h2>deposit token</h2>
+        <p>Deposit your token to Hako. (Translate your token into credit.)</p>
+        how much? <input class="question" type="text" name="value" v-model="value"><br>
+        <button class="button" @click="check">check</button>
+        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+        <button class="button" @click="depositToken" v-show="ok && active">deposit</button>
+      </div>
+
+      <div class="transaction" id="withdrawToken" v-show="isMember && haveNotDebtToHako && haveNotDebtToMember">
+        <h2>withdraw token</h2>
+        <p>Withdraw your token from Hako. (Translate your credit into token.)</p>
+        how much? <input class="question" type="text" name="value" v-model="value"><br>
+        <button class="button" @click="check">check</button>
+        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+        <button class="button" @click="withdrawToken" v-show="ok && active">withdraw</button>
+      </div>
+
+      <div class="transaction" id="registerBorrowValueDuration" v-show="isMember && haveNotDebtToMember">
+        <h2>register borrowing</h2>
+        <p>Register the credit value that you want to borrow from other member accounts, and<br>
+        register the duration that you want to borrow the credit for.</p>
+        how much? <input class="question" type="text" name="value" v-model="value"><br>
+        how long? 
+        <input class="question duration" type="text" name="duration" v-model="days">days
+        <input class="question duration" type="text" name="duration" v-model="hours">hours
+        <input class="question duration" type="text" name="duration" v-model="minutes">minutes
+        <input class="question duration" type="text" name="duration" v-model="seconds">seconds<br>
+        <button class="button" @click="check">check</button>
+        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+        <button class="button" @click="registerBorrowValueDuration" v-show="ok && active">register</button>
+      </div>
+
+      <div class="transaction" id="lendCredit" v-show="isMember">
+        <h2>lend credit</h2>
+        <p>Lend your credit to another member account.<br>
+          (You can't lend more credit than the borrower registered and you can't lend credit for more duration than the borrower registered.)</p>
+        to who? <input class="question" type="text" name="to" v-model="to"><br>
+        how much? <input class="question" type="text" name="value" v-model="value"><br>
+        how long? 
+        <input class="question duration" type="text" name="duration" v-model="days">days
+        <input class="question duration" type="text" name="duration" v-model="hours">hours
+        <input class="question duration" type="text" name="duration" v-model="minutes">minutes
+        <input class="question duration" type="text" name="duration" v-model="seconds">seconds<br>
+        <button class="button" @click="check">check</button>
+        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+        <button class="button" @click="lendCredit" v-show="ok && active">lend</button>
+      </div>
+
+      <div class="transaction" id="collectDebtFrom" v-show="isMember && !haveNotCreditToMember">
+        <h2>collect debt</h2>
+        <p>Collect your credit from the debtor account.<br>
+          (You can't collect your credit if the borrow duration is yet to be passsed.)</p>
+        <button class="button" @click="getCreditToMemberInfo">search</button><br>
+        <ul class="creditDebtInfo" v-for="lendRecord in lendRecordsOfUser" :key="lendRecord.id" v-show="lendRecordActive">
+          <li v-cloak>{{lendRecord.id}}</li>
+          <li v-cloak>{{lendRecord.debtor}}</li>
+          <li v-cloak>{{lendRecord.value}}</li>
+          <li v-cloak>{{lendRecord.duration}}</li>
+          <li v-cloak>{{lendRecord.time}}</li>
+          <li v-cloak>{{lendRecord.deadline}}</li>
+          <li v-cloak>{{lendRecord.over}}</li>
+        </ul>
+        from who? <input class="question" type="text" name="debtor" v-model="debtor"><br>
+        lending ID: <input class="question" type="text" name="id" v-model="id"><br>
+        <button class="button" @click="check">check</button>
+        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+        <button class="button" @click="collectDebtFrom" v-show="ok && active">collect</button>
+      </div>
+
+      <div class="transaction" id="returnDebtTo" v-show="isMember && !haveNotDebtToMember">
+        <h2>return debt</h2>
+        <p>Return your debt to the creditor account.</p>
+        <button class="button" @click="getDebtToMemberInfo">search</button><br>
+        <ul class="creditDebtInfo" v-for="lendRecord in lendRecordsOfUser" :key="lendRecord.id" v-show="lendRecordActive">
+          <li v-cloak>{{lendRecord.id}}</li>
+          <li v-cloak>{{lendRecord.creditor}}</li>
+          <li v-cloak>{{lendRecord.value}}</li>
+          <li v-cloak>{{lendRecord.duration}}</li>
+          <li v-cloak>{{lendRecord.time}}</li>
+          <li v-cloak>{{lendRecord.deadline}}</li>
+          <li v-cloak>{{lendRecord.over}}</li>
+        </ul>
+        to who? <input class="question" type="text" name="creditor" v-model="creditor"><br>
+        lending ID: <input class="question" type="text" name="id" v-model="id"><br>
+        <button class="button" @click="check">check</button>
+        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+        <button class="button" @click="returnDebtTo" v-show="ok && active">return</button>
+      </div>
+
+      <div class="transaction" id="creditCreationByMember" v-show="isMember && haveNotDebtToHako">
+        <h2>credit creation</h2>
+        <p>Create your credit by owing debt to Hako.<br>
+          (You can't create more credit than your net assets.)</p>
+        how much? <input class="question" type="text" name="value" v-model="value"><br>
+        <button class="button" @click="check">check</button>
+        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+        <button class="button" @click="creditCreationByMember" v-show="ok && active">credit creation</button>
+      </div>
+
+      <div class="transaction" id="arrangement" v-show="isMember && !haveNotDebtToHako">
+        <h2>arrangement debt</h2>
+        <p>Reduce your debt by reducing your credit.</p>
+        how much? <input class="question" type="text" name="value" v-model="value"><br>
+        <button class="button" @click="check">check</button>
+        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+        <button class="button" @click="arrangement" v-show="ok && active">arrangement</button>
+      </div>
+    </div>
+    </div>
+
+    <footer>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="script2.js"></script>
+  </body>
+</html>
