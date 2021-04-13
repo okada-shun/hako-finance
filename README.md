@@ -17,10 +17,10 @@ Hako Token is based on the latter theory unlike the other tokens. In docs, I tel
 
 ## docs link
 
-Main features of Hako System
+[Main features of Hako System](https://github.com/okada-shun/hako-system/blob/master/docs/MainFeatures.md)
 
-Functions of Hako System
+[Functions of Hako System](https://github.com/okada-shun/hako-system/blob/master/docs/Functions.md)
 
-Theory of Hako System
+[Theory of Hako System](https://github.com/okada-shun/hako-system/blob/master/docs/Theory.md)
 
-About the future project
+[About the future project](https://github.com/okada-shun/hako-system/blob/master/docs/FutureProject.md)
