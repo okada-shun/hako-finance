@@ -13,91 +13,91 @@ Suppose that there is 100 token in the world and Bob has 100 token.
 
 |      1     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: |
-| Hako | 0             | 0                            | 0                          | 0                            | 0                       | 
-| Bob   | 100              | 0                          | 0                          | 0                            | 0                          | 
-| Carol   | 0             | 0                            | 0                        | 0                            | 0                          | 
-| Dave   | 0              | 0                          | 0                          | 0                            | 0                          | 
-| Eric   | 0              | 0                          | 0                          | 0                            | 0                          | 
+| Hako | 0             | -                            | -                          | 0                            | 0                       | 
+| Bob   | 100              | 0                          | 0                          | -                            | -                          | 
+| Carol   | 0             | 0                            | 0                        | -                            | -                          | 
+| Dave   | 0              | 0                          | 0                          | -                            | -                          | 
+| Eric   | 0              | 0                          | 0                          | -                            | -                          | 
 
 And then, if he deposits 100 token to Hako, it comes to as follows.
 
 |      2     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: |
-| Hako | 100             | 0                            | 0                          | 0                            | 100                       | 
-| Bob   | 0              | 100                          | 0                          | 0                            | 0                          | 
-| Carol   | 0             | 0                            | 0                        | 0                            | 0                          | 
-| Dave   | 0              | 0                          | 0                          | 0                            | 0                          | 
-| Eric   | 0              | 0                          | 0                          | 0                            | 0                          | 
+| Hako | 100             | -                            | -                          | 0                            | 100                       | 
+| Bob   | 0              | 100                          | 0                          | -                            | -                          | 
+| Carol   | 0             | 0                            | 0                        | -                            | -                          | 
+| Dave   | 0              | 0                          | 0                          | -                            | -                          | 
+| Eric   | 0              | 0                          | 0                          | -                            | -                          | 
 
 And then, if he creates 100 credit, it comes to as follows.
 
 |      3     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | 
-| Hako | 100             | 0                            | 0                          | 100                            | 200                       | 
-| Bob   | 0              | 200                          | 100                          | 0                            | 0                          | 
-| Carol   | 0             | 0                            | 0                        | 0                            | 0                          | 
-| Dave   | 0              | 0                          | 0                          | 0                            | 0                          | 
-| Eric   | 0              | 0                          | 0                          | 0                            | 0                          | 
+| Hako | 100             | -                            | -                          | 100                            | 200                       | 
+| Bob   | 0              | 200                          | 100                          | -                            | -                          | 
+| Carol   | 0             | 0                            | 0                        | -                            | -                          | 
+| Dave   | 0              | 0                          | 0                          | -                            | -                          | 
+| Eric   | 0              | 0                          | 0                          | -                            | -                          | 
 
 And then, if he transfers 200 credit to Carol, it comes to as follows.
 
 |      4     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | 
-| Hako | 100             | 0                            | 0                          | 100                            | 200                       | 
-| Bob   | 0              | 0                          | 100                          | 0                            | 0                          | 
-| Carol   | 0             | 200                            | 0                        | 0                            | 0                          | 
-| Dave   | 0              | 0                          | 0                          | 0                            | 0                          | 
-| Eric   | 0              | 0                          | 0                          | 0                            | 0                          | 
+| Hako | 100             | -                            | -                          | 100                            | 200                       | 
+| Bob   | 0              | 0                          | 100                          | -                            | -                          | 
+| Carol   | 0             | 200                            | 0                        | -                            | -                          | 
+| Dave   | 0              | 0                          | 0                          | -                            | -                          | 
+| Eric   | 0              | 0                          | 0                          | -                            | -                          | 
 
 And then, if Carol creates 200 credit, it comes to as follows.
 
 |      5     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | 
-| Hako | 100             | 0                            | 0                          | 300                            | 400                       | 
-| Bob   | 0              | 0                          | 100                          | 0                            | 0                          | 
-| Carol   | 0             | 400                            | 200                       | 0                            | 0                          | 
-| Dave   | 0              | 0                          | 0                          | 0                            | 0                          | 
-| Eric   | 0              | 0                          | 0                          | 0                            | 0                          | 
+| Hako | 100             | -                            | -                          | 300                            | 400                       | 
+| Bob   | 0              | 0                          | 100                          | -                            | -                          | 
+| Carol   | 0             | 400                            | 200                       | -                            | -                          | 
+| Dave   | 0              | 0                          | 0                          | -                            | -                          | 
+| Eric   | 0              | 0                          | 0                          | -                            | -                          | 
 
 And then, if she transfers 400 credit to Dave, it comes to as follows.
 
 |      6     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | 
-| Hako | 100             | 0                            | 0                          | 300                            | 400                       | 
-| Bob   | 0              | 0                          | 100                          | 0                            | 0                          | 
-| Carol   | 0             | 0                            | 200                       | 0                            | 0                          | 
-| Dave   | 0              | 400                          | 0                          | 0                            | 0                          | 
-| Eric   | 0              | 0                          | 0                          | 0                            | 0                          | 
+| Hako | 100             | -                            | -                          | 300                            | 400                       | 
+| Bob   | 0              | 0                          | 100                          | -                            | -                          | 
+| Carol   | 0             | 0                            | 200                       | -                            | -                          | 
+| Dave   | 0              | 400                          | 0                          | -                            | -                          | 
+| Eric   | 0              | 0                          | 0                          | -                            | -                          | 
 
 And then, if Dave creates 400 credit, it comes to as follows.
 
 |      7     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | 
-| Hako | 100             | 0                            | 0                          | 700                            | 800                       | 
-| Bob   | 0              | 0                          | 100                          | 0                            | 0                          | 
-| Carol   | 0             | 0                            | 200                       | 0                            | 0                          | 
-| Dave   | 0              | 800                          | 400                          | 0                            | 0                          | 
-| Eric   | 0              | 0                          | 0                          | 0                            | 0                          | 
+| Hako | 100             | -                            | -                          | 700                            | 800                       | 
+| Bob   | 0              | 0                          | 100                          | -                            | -                          | 
+| Carol   | 0             | 0                            | 200                       | -                            | -                          | 
+| Dave   | 0              | 800                          | 400                          | -                            | -                          | 
+| Eric   | 0              | 0                          | 0                          | -                            | -                          | 
 
 And then, if he transfers 800 credit to Eric, it comes to as follows.
 
 |      8     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | 
-| Hako | 100             | 0                            | 0                          | 700                            | 800                       | 
-| Bob   | 0              | 0                          | 100                          | 0                            | 0                          | 
-| Carol   | 0             | 0                            | 200                       | 0                            | 0                          | 
-| Dave   | 0              | 0                          | 400                          | 0                            | 0                          | 
-| Eric   | 0              | 800                          | 0                          | 0                            | 0                          | 
+| Hako | 100             | -                            | -                          | 700                            | 800                       | 
+| Bob   | 0              | 0                          | 100                          | -                            | -                          | 
+| Carol   | 0             | 0                            | 200                       | -                            | -                          | 
+| Dave   | 0              | 0                          | 400                          | -                            | -                          | 
+| Eric   | 0              | 800                          | 0                          | -                            | -                          | 
 
 And then, if Eric withdraws 800 credit from Hako, it comes to as follows.
 
 |      9     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | 
-| Hako | 0             | 0                            | 0                          | 700                            | 0                       | 
-| Bob   | 0              | 0                          | 100                          | 0                            | 0                          | 
-| Carol   | 0             | 0                            | 200                       | 0                            | 0                          | 
-| Dave   | 0              | 0                          | 400                          | 0                            | 0                          | 
-| Eric   | 800              | 0                          | 0                          | 0                            | 0                          | 
+| Hako | 0             | -                            | -                          | 700                            | 0                       | 
+| Bob   | 0              | 0                          | 100                          | -                            | -                          | 
+| Carol   | 0             | 0                            | 200                       | -                            | -                          | 
+| Dave   | 0              | 0                          | 400                          | -                            | -                          | 
+| Eric   | 800              | 0                          | 0                          | -                            | -                          | 
 
 In the table 1, there is only 100 token. However, in the table 9, there is 800 token. Like this, by repeating credit creation and transfer credit, so much token can be generated.  
 Wait, from table 1 to table 9, the amount of token increased 8 times. Some of you may expect that the price of token falls in 1/8 because the supply of token increases 8 times.  

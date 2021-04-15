@@ -24,15 +24,15 @@ Bob has 1000 token.
 
 |     1      | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | 
-| Hako | 0                | 0                            | 0                          | 0                            | 0                          | 
-| Bob   | 1000             | 0                            | 0                          | 0                            | 0                          | 
+| Hako | 0                | -                            | -                          | 0                            | 0                          | 
+| Bob   | 1000             | 0                            | 0                          | -                            | -                          | 
 
 If Bob deposits 300 token to Hako, it comes to as follows.
 
 |      2     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | 
-| Hako | 300              | 0                            | 0                          | 0                            | 300                        | 
-| Bob   | 700              | 300                          | 0                          | 0                            | 0                          | 
+| Hako | 300              | -                            | -                          | 0                            | 300                        | 
+| Bob   | 700              | 300                          | 0                          | -                            | -                          | 
 
 As above, Bob gets 300 credit instead of depositing 300 token and Hako gets 300 token instead of owing 300 debt to Bob. From formula (1), Bob's credit to Hako is equal to Hako's debt to Bob. So, Hako's debt to Member increases by 300.
 
@@ -46,19 +46,19 @@ Carol has 1500 token and Dave has 500 token.
 
 |     3      | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | 
-| Hako | 300              | 0                            | 0                          | 0                            | 300                        | 
-| Bob   | 700              | 300                          | 0                          | 0                            | 0                          | 
-| Carol   | 1500             | 0                            | 0                          | 0                            | 0                          | 
-| Dave   | 500              | 0                            | 0                          | 0                            | 0                          | 
+| Hako | 300              | -                            | -                          | 0                            | 300                        | 
+| Bob   | 700              | 300                          | 0                          | -                            | -                          | 
+| Carol   | 1500             | 0                            | 0                          | -                            | -                          | 
+| Dave   | 500              | 0                            | 0                          | -                            | -                          | 
 
 If Carol deposits 500 token and Dave deposits 200 token to Hako, it comes to as follows.
 
 |     4      | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | 
-| Hako | 1000             | 0                            | 0                          | 0                            | 1000                       | 
-| Bob   | 700              | 300                          | 0                          | 0                            | 0                          | 
-| Carol   | 1000             | 500                          | 0                          | 0                            | 0                          | 
-| Dave   | 300              | 200                          | 0                          | 0                            | 0                          | 
+| Hako | 1000             | -                            | -                          | 0                            | 1000                       | 
+| Bob   | 700              | 300                          | 0                          | -                            | -                          | 
+| Carol   | 1000             | 500                          | 0                          | -                            | -                          | 
+| Dave   | 300              | 200                          | 0                          | -                            | -                          | 
 
 As above, Carol gets 500 credit instead of depositing 500 token and Hako gets 500 token instead of owing 500 debt to Carol. Also, Dave gets 200 credit instead of depositing 200 token and Hako gets 200 token instead of owing 200 debt to Dave. As a result, Hako's debt to Member increases by 700 ( = 500 + 200).
 
@@ -87,10 +87,10 @@ If Bob transfers 100 credit to Carol, it comes to as follows.
 
 |     5      | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | 
-| Hako | 1000             | 0                            | 0                          | 0                            | 1000                       | 
-| Bob   | 700              | 200                          | 0                          | 0                            | 0                          | 
-| Carol   | 1000             | 600                          | 0                          | 0                            | 0                          | 
-| Dave   | 300              | 200                          | 0                          | 0                            | 0                          | 
+| Hako | 1000             | -                            | -                          | 0                            | 1000                       | 
+| Bob   | 700              | 200                          | 0                          | -                            | -                          | 
+| Carol   | 1000             | 600                          | 0                          | -                            | -                          | 
+| Dave   | 300              | 200                          | 0                          | -                            | -                          | 
 
 As above, Bob loses 100 credit and Carol gets 100 credit. Hako's debt to Member does not change. (1000 = 200 + 600 + 200)
 
@@ -104,10 +104,10 @@ If Bob lends 100 credit to Carol for 10 days, it comes to as follows.
 
 |      6     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | Member's credit to Other Member | Member's debt to Other Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | :-----------------------: | :---------------------: | 
-| Hako | 1000             | 0                            | 0                          | 0                            | 1000                       | 0                         | 0                       | 
-| Bob   | 700              | 100                          | 0                          | 0                            | 0                          | 100                       | 0                       | 
-| Carol   | 1000             | 700                          | 0                          | 0                            | 0                          | 0                         | 100                     | 
-| Dave   | 300              | 200                          | 0                          | 0                            | 0                          | 0                         | 0                       | 
+| Hako | 1000             | -                            | -                          | 0                            | 1000                       | -                         | -                       | 
+| Bob   | 700              | 100                          | 0                          | -                            | -                          | 100                       | 0                       | 
+| Carol   | 1000             | 700                          | 0                          | -                            | -                          | 0                         | 100                     | 
+| Dave   | 300              | 200                          | 0                          | -                            | -                          | 0                         | 0                       | 
 
 As above, Bob loses 100 "credit to Hako" instead of getting 100 "credit to Other Member" and Carol gets 100 "credit to Hako" instead of owing 100 "debt to Other Member". From formula (1), Bob's credit to Carol is equal to Carol's debt to Bob.  
 Carol gets 100 credit by borrowing, so her total credit is 700. However, she becomes unable to withdraw her token from Hako.  
@@ -118,10 +118,10 @@ If she borrows 100 credit from the other member and she can withdraw 700 token f
 
 |     7     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | Member's credit to Other Member | Member's debt to Other Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | :-----------------------: | :---------------------: | 
-| Hako | 1000             | 0                            | 0                          | 0                            | 1000                       | 0                         | 0                       | 
-| Bob   | 700              | 200                          | 0                          | 0                            | 0                          | 0                         | 0                       | 
-| Carol   | 1000             | 600                          | 0                          | 0                            | 0                          | 0                         | 0                       | 
-| Dave   | 300              | 200                          | 0                          | 0                            | 0                          | 0                         | 0                       | 
+| Hako | 1000             | -                            | -                          | 0                            | 1000                       | -                         | -                       | 
+| Bob   | 700              | 200                          | 0                          | -                            | -                          | 0                         | 0                       | 
+| Carol   | 1000             | 600                          | 0                          | -                            | -                          | 0                         | 0                       | 
+| Dave   | 300              | 200                          | 0                          | -                            | -                          | 0                         | 0                       | 
 
 This is the same as table5 situation. By returning, Bob's credit to Carol disappears and Carol's debt to Bob disappears too.
 
@@ -133,19 +133,19 @@ Suppose Carol transferred all of her 700 credit to Dave after borrowing, it come
 
 |      8     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | Member's credit to Other Member | Member's debt to Other Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | :-----------------------: | :---------------------: | 
-| Hako | 1000             | 0                            | 0                          | 0                            | 1000                       | 0                         | 0                       | 
-| Bob   | 700              | 100                          | 0                          | 0                            | 0                          | 100                       | 0                       | 
-| Carol   | 1000             | 0                            | 0                          | 0                            | 0                          | 0                         | 100                     | 
-| Dave   | 300              | 900                          | 0                          | 0                            | 0                          | 0                         | 0                       | 
+| Hako | 1000             | -                            | -                          | 0                            | 1000                       | -                         | -                       | 
+| Bob   | 700              | 100                          | 0                          | -                            | -                          | 100                       | 0                       | 
+| Carol   | 1000             | 0                            | 0                          | -                            | -                          | 0                         | 100                     | 
+| Dave   | 300              | 900                          | 0                          | -                            | -                          | 0                         | 0                       | 
 
 Then, if Bob claims Carol to return, what will happen? The answer is as follows.
 
 |      9     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | Member's credit to Other Member | Member's debt to Other Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | :-----------------------: | :---------------------: | 
-| Hako | 1000             | 0                            | 0                          | 100                            | 1100                       | 0                         | 0                       | 
-| Bob   | 700              | 200                          | 0                          | 0                            | 0                          | 0                         | 0                       | 
-| Carol   | 1000             | 0                            | 100                        | 0                            | 0                          | 0                         | 0                       | 
-| Dave   | 300              | 900                          | 0                          | 0                            | 0                          | 0                         | 0                       | 
+| Hako | 1000             | -                            | -                          | 100                            | 1100                       | -                         | -                       | 
+| Bob   | 700              | 200                          | 0                          | -                            | -                          | 0                         | 0                       | 
+| Carol   | 1000             | 0                            | 100                        | -                            | -                          | 0                         | 0                       | 
+| Dave   | 300              | 900                          | 0                          | -                            | -                          | 0                         | 0                       | 
 
 As above, Carol's debt to Bob is translated into Carol's debt to Hako. As a result, Hako's credit to Member increases (because Carol's debt to Hako = Hako's credit to Carol) and Hako's debt to Member increases (because Bob's credit to Hako = Hako's debt to Bob) too. Like from table6 to table7 situation, Bob's credit to Carol disappears and Carol's debt to Bob disappears too.
 
@@ -169,10 +169,10 @@ If Bob creates 300 credit, it comes to as follows.
 
 |      10     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | Member's credit to Other Member | Member's debt to Other Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | :-----------------------: | :---------------------: | 
-| Hako | 1000             | 0                            | 0                          | 400                            | 1400                       | 0                         | 0                       | 
-| Bob   | 700              | 500                          | 300                          | 0                            | 0                          | 0                         | 0                       | 
-| Carol   | 1000             | 0                            | 100                        | 0                            | 0                          | 0                         | 0                       | 
-| Dave   | 300              | 900                          | 0                          | 0                            | 0                          | 0                         | 0                       | 
+| Hako | 1000             | -                            | -                          | 400                            | 1400                       | -                         | -                       | 
+| Bob   | 700              | 500                          | 300                          | -                            | -                          | 0                         | 0                       | 
+| Carol   | 1000             | 0                            | 100                        | -                            | -                          | 0                         | 0                       | 
+| Dave   | 300              | 900                          | 0                          | -                            | -                          | 0                         | 0                       | 
 
 Bob can get 300 credit, so his credit adds up from 200 to 500. However, at the same time, he owes 300 debt to Hako, so his debt to Hako also increases and adds up to 300.  
 On the side of hako, its credit to Member increases by 300 because Bob's debt to Hako increases. Similarly, its debt to Member increases by 300 because Bob's credit to Hako increases. (400 = 300 + 100 + 0, 1400 = 500 + 0 + 900 : From formula (1))  
@@ -189,10 +189,10 @@ If Bob reduces his debt by 100 by reducing his credit, it comes to as follows.
 
 |      11     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | Member's credit to Other Member | Member's debt to Other Member | 
 | :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | :-----------------------: | :---------------------: | 
-| Hako | 1000             | 0                            | 0                          | 300                            | 1300                       | 0                         | 0                       | 
-| Bob   | 700              | 400                          | 200                          | 0                            | 0                          | 0                         | 0                       | 
-| Carol   | 1000             | 0                            | 100                        | 0                            | 0                          | 0                         | 0                       | 
-| Dave   | 300              | 900                          | 0                          | 0                            | 0                          | 0                         | 0                       | 
+| Hako | 1000             | -                            | -                          | 300                            | 1300                       | -                         | -                       | 
+| Bob   | 700              | 400                          | 200                          | -                            | -                          | 0                         | 0                       | 
+| Carol   | 1000             | 0                            | 100                        | -                            | -                          | 0                         | 0                       | 
+| Dave   | 300              | 900                          | 0                          | -                            | -                          | 0                         | 0                       | 
 
 Bob can reduce 100 debt, so his debt decreases from 300 to 200. However, at the same time, his credit decreases from 500 to 400 too.  
 On the side of hako, its credit to Member decreases by 100 because Bob's debt to Hako decreases. Similarly, its debt to Member decreases by 100 because Bob's credit to Hako decreases. (300 = 200 + 100 + 0, 1300 = 400 + 0 + 900 : From formula (1))
