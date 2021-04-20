@@ -12,7 +12,7 @@ var registerBorrowValueDurationVM = new Vue({
     debtToHakoOfUser: '',
     creditToMemberOfUser: '',
     debtToMemberOfUser: '',
-    netAssets: '',
+    netAssetsOfUser: '',
     noCheckSentence: '',
     okCheckSentence: '',
     ok: '',
@@ -28,22 +28,21 @@ var registerBorrowValueDurationVM = new Vue({
         this.active = !this.active;
         return;
       }
-      this.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
-      this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
-      this.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
-      this.creditToMemberOfUser = await hako.methods.creditToMemberOf(userAccount).call();
-      this.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
-      this.netAssets = Number(this.balanceOfUser) + Number(this.creditToHakoOfUser) - 
-      Number(this.debtToHakoOfUser) + Number(this.creditToMemberOfUser) - Number(this.debtToMemberOfUser);
-      if (this.netAssets < 0) {
+      this.balanceOfUser = userInfoVM.userBalance;
+      this.creditToHakoOfUser = userInfoVM.creditToHakoOfUser;
+      this.debtToHakoOfUser = userInfoVM.debtToHakoOfUser;
+      this.creditToMemberOfUser = userInfoVM.creditToMemberOfUser;
+      this.debtToMemberOfUser = userInfoVM.debtToMemberOfUser;
+      this.netAssetsOfUser = userInfoVM.netAssetsOfUser;
+      if (this.netAssetsOfUser < 0) {
         this.noCheckSentence = 
         "NO! Your net assets is under zero! You can't register borrow value and borrow duration!";
       } else if (this.debtToMemberOfUser !== '0') {
         this.noCheckSentence = 
         "NO! You have " + this.debtToMemberOfUser + " debt to Member! You should return them all or you can't register!";
-      } else if (Number(this.value) > this.netAssets) {
+      } else if (Number(this.value) > this.netAssetsOfUser) {
         this.noCheckSentence = 
-        "NO! Your net assets is only " + this.netAssets + "! You can't register more than " + this.netAssets + " credit!";
+        "NO! Your net assets is only " + this.netAssetsOfUser + "! You can't register more than " + this.netAssetsOfUser + " credit!";
       } else {
         this.okCheckSentence = 
         "OK! You register that you want to borrow " + this.value + " credit for " + this.duration + " seconds!";
@@ -112,7 +111,7 @@ var lendCreditVM = new Vue({
         this.active = !this.active;
         return;
       }
-      this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
+      this.creditToHakoOfUser = userInfoVM.creditToHakoOfUser;
       this.debtToHakoOfTo = await hako.methods.debtToHakoOf(this.to).call();
       this.borrowValueDurationOfTo = await hako.methods.getBorrowValueDurationOf(this.to).call();
       this.valueDuration.value = this.borrowValueDurationOfTo['0'];
@@ -370,7 +369,7 @@ var returnDebtToVM = new Vue({
         this.active = !this.active;
         return;
       }
-      this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
+      this.creditToHakoOfUser = userInfoVM.creditToHakoOfUser;
       if (Number(this.lendRecords['3']) > Number(this.creditToHakoOfUser)) {
         this.noCheckSentence = "NO! You have only " + this.creditToHakoOfUser + " credit! " + this.lendRecords['3'] + " is over!";
       } else if (this.lendRecords['2'].toUpperCase() !== userAccount.toUpperCase()) {
@@ -415,7 +414,7 @@ var creditCreationByMemberVM = new Vue({
     debtToHakoOfUser: '',
     creditToMemberOfUser: '',
     debtToMemberOfUser: '',
-    netAssets: '',
+    netAssetsOfUser: '',
     noCheckSentence: '',
     okCheckSentence: '',
     ok: '',
@@ -429,21 +428,21 @@ var creditCreationByMemberVM = new Vue({
         this.active = !this.active;
         return;
       }
-      this.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
-      this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
-      this.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
-      this.creditToMemberOfUser = await hako.methods.creditToMemberOf(userAccount).call();
-      this.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
-      this.netAssets = Number(this.balanceOfUser) + Number(this.creditToHakoOfUser) - Number(this.debtToHakoOfUser) + Number(this.creditToMemberOfUser) - Number(this.debtToMemberOfUser);
-      if (this.netAssets < 0) {
+      this.balanceOfUser = userInfoVM.userBalance;
+      this.creditToHakoOfUser = userInfoVM.creditToHakoOfUser;
+      this.debtToHakoOfUser = userInfoVM.debtToHakoOfUser;
+      this.creditToMemberOfUser = userInfoVM.creditToMemberOfUser;
+      this.debtToMemberOfUser = userInfoVM.debtToMemberOfUser;
+      this.netAssetsOfUser = userInfoVM.netAssetsOfUser;
+      if (this.netAssetsOfUser < 0) {
         this.noCheckSentence = 
         "NO! Your net assets is under zero! You can't register borrow value and borrow duration!";
       } else if (this.debtToHakoOfUser !== '0') {
         this.noCheckSentence = 
         "NO! You have " + this.debtToHakoOfUser + " debt to Hako! You should return them all or you can't create credit!";
-      } else if (Number(this.value) > Number(this.netAssets)) {
+      } else if (Number(this.value) > Number(this.netAssetsOfUser)) {
         this.noCheckSentence = 
-        "NO! Your net assets is only " + this.netAssets + "! You can't create more than " + this.netAssets + " credit!";
+        "NO! Your net assets is only " + this.netAssetsOfUser + "! You can't create more than " + this.netAssetsOfUser + " credit!";
       } else {
         this.okCheckSentence = 
         "OK! You create " + this.value + " credit! At this time, you have " + this.value + " debt to Hako!";
@@ -491,8 +490,8 @@ var arrangementVM = new Vue({
         this.active = !this.active;
         return;
       }
-      this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
-      this.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
+      this.creditToHakoOfUser = userInfoVM.creditToHakoOfUser;
+      this.debtToHakoOfUser = userInfoVM.debtToHakoOfUser;
       if (Number(this.value) > Number(this.creditToHakoOfUser)) {
         this.noCheckSentence = "NO! You have only " + this.creditToHakoOfUser + " credit! " + this.value + " is over!";
       } else if (Number(this.value) > Number(this.debtToHakoOfUser)) {

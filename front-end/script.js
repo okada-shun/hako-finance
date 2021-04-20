@@ -6,7 +6,6 @@ async function startApp() {
   hako = new web3.eth.Contract(hakoABI, hakoAddress);
   userAccount = await web3.eth.getCoinbase();
   hakoInfoVM.hakoAddress = hakoAddress;
-  hakoInfoVM.userAccount = userAccount;
   hakoInfoVM.displayHakoInfo();
   userInfoVM.userAccount = userAccount;
   userInfoVM.displayUserInfo();
@@ -31,7 +30,6 @@ var hakoInfoVM = new Vue({
     creditOfHako: '',
     debtOfHako: '',
     memberCount: '',
-    userAccount: '',
     memberOrNot: ''
   },
   methods: {
@@ -41,7 +39,7 @@ var hakoInfoVM = new Vue({
       this.creditOfHako = await hako.methods.creditOfHako().call();
       this.debtOfHako = await hako.methods.debtOfHako().call();
       this.memberCount = await hako.methods.memberCount().call();
-      this.memberOrNot = await hako.methods.memberCheckOf(this.userAccount).call();
+      this.memberOrNot = await hako.methods.memberCheckOf(userAccount).call();
     }
   },
   computed: {
@@ -71,16 +69,16 @@ var userInfoVM = new Vue({
   },
   methods: {
     async displayUserInfo() {
-      this.userBalance = await hako.methods.balanceOf(this.userAccount).call();
-      this.memberOrNot = await hako.methods.memberCheckOf(this.userAccount).call();
-      this.creditToHakoOfUser = await hako.methods.creditToHakoOf(this.userAccount).call();
-      this.debtToHakoOfUser = await hako.methods.debtToHakoOf(this.userAccount).call();
+      this.userBalance = await hako.methods.balanceOf(userAccount).call();
+      this.memberOrNot = await hako.methods.memberCheckOf(userAccount).call();
       await this.memberCheck();
-      this.creditToMemberOfUser = await hako.methods.creditToMemberOf(this.userAccount).call();
-      this.debtToMemberOfUser = await hako.methods.debtToMemberOf(this.userAccount).call();
+      this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
+      this.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
+      this.creditToMemberOfUser = await hako.methods.creditToMemberOf(userAccount).call();
+      this.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
       this.netAssetsOfUser = Number(this.userBalance) + Number(this.creditToHakoOfUser)
-        - Number(this.debtToHakoOfUser) + Number(this.creditToMemberOfUser) - Number(this.debtToMemberOfUser);
-      this.borrowValueDurationOfUser = await hako.methods.getBorrowValueDurationOf(this.userAccount).call();
+       - Number(this.debtToHakoOfUser) + Number(this.creditToMemberOfUser) - Number(this.debtToMemberOfUser);
+      this.borrowValueDurationOfUser = await hako.methods.getBorrowValueDurationOf(userAccount).call();
       this.valueDuration.value = this.borrowValueDurationOfUser['0'];
       this.valueDuration.duration = this.borrowValueDurationOfUser['1'];
     },
@@ -125,7 +123,7 @@ var transferVM = new Vue({
         this.active = !this.active;
         return;
       }
-      this.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
+      this.balanceOfUser = userInfoVM.userBalance;
       if (Number(this.value) > Number(this.balanceOfUser)) {
         this.noCheckSentence = "NO! You have only " + this.balanceOfUser + " token! " + this.value + " is over!";
       } else {
@@ -178,7 +176,7 @@ var transferCreditVM = new Vue({
         this.active = !this.active;
         return;
       }
-      this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
+      this.creditToHakoOfUser = userInfoVM.creditToHakoOfUser;
       this.debtToHakoOfTo = await hako.methods.debtToHakoOf(this.to).call();
       if (this.memberOrNotOfTo !== '1') {
         this.noCheckSentence = 
@@ -231,7 +229,7 @@ var joinHakoVM = new Vue({
         this.active = !this.active;
         return;
       }
-      this.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
+      this.balanceOfUser = userInfoVM.userBalance;
       if (Number(this.value) > Number(this.balanceOfUser)) {
         this.noCheckSentence = "NO! You have only " + this.balanceOfUser + " token! " + this.value + " is over!";
       } else {
@@ -273,10 +271,10 @@ var leaveHakoVM = new Vue({
   methods: {
     async check() {
       this.ok = false;
-      this.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
-      this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
-      this.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
-      this.creditToMemberOfUser = await hako.methods.creditToMemberOf(userAccount).call();
+      this.debtToHakoOfUser = userInfoVM.debtToHakoOfUser;
+      this.creditToHakoOfUser = userInfoVM.creditToHakoOfUser;
+      this.debtToMemberOfUser = userInfoVM.debtToMemberOfUser;
+      this.creditToMemberOfUser = userInfoVM.creditToMemberOfUser;
       if (this.debtToHakoOfUser !== '0') {
         this.noCheckSentence = 
         "NO! You have " + this.debtToHakoOfUser + " debt to Hako! You should return them all or you can't leave!";
@@ -337,7 +335,7 @@ var depositTokenVM = new Vue({
         this.active = !this.active;
         return;
       }
-      this.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
+      this.balanceOfUser = userInfoVM.userBalance;
       if (Number(this.value) > Number(this.balanceOfUser)) {
         this.noCheckSentence = "NO! You have only " + this.balanceOfUser + " token! " + this.value + " is over!";
       } else {
@@ -384,9 +382,9 @@ var withdrawTokenVM = new Vue({
         this.active = !this.active;
         return;
       }
-      this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
-      this.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
-      this.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
+      this.creditToHakoOfUser = userInfoVM.creditToHakoOfUser;
+      this.debtToHakoOfUser = userInfoVM.debtToHakoOfUser;
+      this.debtToMemberOfUser = userInfoVM.debtToMemberOfUser;
       if (Number(this.value) > Number(this.creditToHakoOfUser)) {
         this.noCheckSentence = 
         "NO! You have only " + this.creditToHakoOfUser + " credit! " + this.value + " is over!";
