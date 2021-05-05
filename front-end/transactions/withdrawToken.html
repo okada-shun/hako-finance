@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Withdraw Token</title>
+  <link rel="stylesheet" href="../stylesheet.css">
+  <link rel="icon" href="../hako_icon.png">
+  <link href="https://fonts.googleapis.com/css?family=Londrina+Shadow" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.9/web3.min.js"></script>
+  <script src="../Hako_abi.js"></script>
+</head>
+<body>
+  <header>
+    <div class="header-logo">
+      <a href="../index.html">Hako Finance</a>
+    </div>
+    <p class="introduction">
+      Transfer, get, lend, borrow, and credit creation, all transactions are realized on Hako Finance! 
+      Welcome to next-generation DeFi!
+    </p>
+  </header>
+  <div class="container">
+    <div class="transactions">
+      <div class="transaction" ID="withdrawToken">
+        <h2>withdraw token</h2>
+        <p>Withdraw your token from Hako. (Translate your credit into token.)</p>
+        how much? <input class="question" type="text" name="value" v-model="value"><br>
+        <button class="button" @click="withdrawTokenCheck">check</button>
+        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+        <button class="button" @click="withdrawToken" v-show="ok && active">withdraw</button>
+        <p>{{txStatus}}</p>
+      </div>
+    </div> 
+  </div>
+  <footer>
+  </footer>  
+  <script>
+    var hakoAddress;
+    var hako;
+    var userAccount;
+    async function startApp() {
+      hakoAddress = "0xc00523a058de5fdebf17ff735d29368e7c9ae114";
+      hako = new web3.eth.Contract(hakoABI, hakoAddress);
+      userAccount = await web3.eth.getCoinbase();
+    }
+
+    window.addEventListener('load', function () {
+      if (typeof web3 !== 'undefined') {
+        web3 = new Web3(window.ethereum);
+        console.log('web3 created!');
+      } else {
+        alert('install wallet!');
+        console.log('install wallet!');
+      }
+      startApp();
+    });
+
+    var withdrawTokenVM = new Vue({
+      el: '#withdrawToken',
+      data: {
+        value: '',
+        creditToHakoOfUser: '',
+        noCheckSentence: '',
+        okCheckSentence: '',
+        ok: '',
+        active: false,
+        txStatus: ''
+      },
+      methods: {
+        withdrawTokenCheck: async function() {
+          this.ok = false;
+          if (!this.value) {
+            this.noCheckSentence = "Please input a value!";
+            this.active = !this.active;
+            return;
+          }
+          this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
+          if (Number(this.value) > Number(this.creditToHakoOfUser)) {
+            this.noCheckSentence = 
+            "NO! You have only " + this.creditToHakoOfUser + " credit! " + this.value + " is over!";
+          } else {
+            this.okCheckSentence = "OK! You withdraw " + this.value + " credit!";
+            this.ok = true;
+          }
+          this.active = !this.active;
+        },
+        withdrawToken: function() {
+          this.txStatus = "Withdrawing token on the blockchain. This may take a while...";
+          return hako.methods.withdrawToken(Number(this.value))
+            .send({ from: userAccount })
+            .on("receipt", function (receipt) {
+              withdrawTokenVM.txStatus = "";
+              alert('Transaction successed!');
+            })
+            .on("error", function (error) {
+              withdrawTokenVM.txStatus = "";
+              alert('Transaction errored!');
+            });
+        }
+      }
+    });
+  </script>
+</body>
+</html>

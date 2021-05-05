@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register Borrowing</title>
+  <link rel="stylesheet" href="../stylesheet.css">
+  <link rel="icon" href="../hako_icon.png">
+  <link href="https://fonts.googleapis.com/css?family=Londrina+Shadow" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.9/web3.min.js"></script>
+  <script src="../Hako_abi.js"></script>
+</head>
+<body>
+  <header>
+    <div class="header-logo">
+      <a href="../index.html">Hako Finance</a>
+    </div>
+    <p class="introduction">
+      Transfer, get, lend, borrow, and credit creation, all transactions are realized on Hako Finance! 
+      Welcome to next-generation DeFi!
+    </p>
+  </header>
+  <div class="container">
+    <div class="transactions">
+      <div class="transaction" id="registerBorrowValueDuration">
+        <h2>register borrowing</h2>
+        <p>Register the credit value that you want to borrow from other member accounts, and<br>
+        register the duration that you want to borrow the credit for.</p>
+        how much? <input class="question" type="text" name="value" v-model="value"><br>
+        how long? 
+        <input class="question duration" type="text" name="duration" v-model="days">days
+        <input class="question duration" type="text" name="duration" v-model="hours">hours
+        <input class="question duration" type="text" name="duration" v-model="minutes">minutes
+        <input class="question duration" type="text" name="duration" v-model="seconds">seconds<br>
+        <button class="button" @click="registerBorrowValueDurationCheck">check</button>
+        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+        <button class="button" @click="registerBorrowValueDuration" v-show="ok && active">register</button>
+        <p>{{txStatus}}</p>
+      </div>  
+    </div> 
+  </div>
+  <footer>
+  </footer>  
+  <script>
+    var hakoAddress;
+    var hako;
+    var userAccount;
+    async function startApp() {
+      hakoAddress = "0xc00523a058de5fdebf17ff735d29368e7c9ae114";
+      hako = new web3.eth.Contract(hakoABI, hakoAddress);
+      userAccount = await web3.eth.getCoinbase();
+    }
+
+    window.addEventListener('load', function () {
+      if (typeof web3 !== 'undefined') {
+        web3 = new Web3(window.ethereum);
+        console.log('web3 created!');
+      } else {
+        alert('install wallet!');
+        console.log('install wallet!');
+      }
+      startApp();
+    });
+
+    var registerBorrowValueDurationVM = new Vue({
+      el: '#registerBorrowValueDuration',
+      data: {
+        value: '',
+        duration: '',
+        days: '',
+        hours: '',
+        minutes: '',
+        seconds: '',
+        balanceOfUser: '',
+        creditToHakoOfUser: '',
+        debtToHakoOfUser: '',
+        creditToMemberOfUser: '',
+        debtToMemberOfUser: '',
+        netAssetsOfUser: '',
+        noCheckSentence: '',
+        okCheckSentence: '',
+        ok: '',
+        active: false,
+        txStatus: ''
+      },
+      methods: {
+        registerBorrowValueDurationCheck: async function() {
+          this.ok = false;
+          this.duration = 
+          Number(this.days) * 24 * 60 * 60 + Number(this.hours) * 60 * 60
+            + Number(this.minutes) * 60 + Number(this.seconds);
+          if (!this.value || !this.duration) {
+            this.noCheckSentence = "Please input a value!";
+            this.active = !this.active;
+            return;
+          }
+          
+          this.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
+          this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
+          this.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
+          this.creditToMemberOfUser = await hako.methods.creditToMemberOf(userAccount).call();
+          this.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
+          this.netAssetsOfUser = Number(this.balanceOfUser) + Number(this.creditToHakoOfUser)
+           - Number(this.debtToHakoOfUser) + Number(this.creditToMemberOfUser) - Number(this.debtToMemberOfUser);
+          if (Number(this.value) > this.netAssetsOfUser) {
+            this.noCheckSentence = 
+            "NO! Your net assets is only " + this.netAssetsOfUser + "! You can't register more than "
+              + this.netAssetsOfUser + " credit!";
+          } else {
+            this.okCheckSentence = 
+            "OK! You register that you want to borrow " + this.value + " credit for "
+              + this.duration + " seconds!";
+            this.ok = true;
+          }
+          this.active = !this.active;
+        },
+        registerBorrowValueDuration: function() {
+          this.txStatus = "Registering borrow value and duration on the blockchain. This may take a while...";
+          return hako.methods.registerBorrowValueDuration(Number(this.value), Number(this.duration))
+          .send({from: userAccount})
+          .on("receipt", function(receipt) {
+            registerBorrowValueDurationVM.txStatus = "";
+            alert('Transaction successed!');
+          })
+          .on("error", function(error) {
+            registerBorrowValueDurationVM.txStatus = "";
+            alert('Transaction errored!');
+          });
+        }
+      }
+    });
+  </script>
+</body>
+</html>

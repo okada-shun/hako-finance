@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lend Credit</title>
+  <link rel="stylesheet" href="../stylesheet.css">
+  <link rel="icon" href="../hako_icon.png">
+  <link href="https://fonts.googleapis.com/css?family=Londrina+Shadow" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.9/web3.min.js"></script>
+  <script src="../Hako_abi.js"></script>
+</head>
+<body>
+  <header>
+    <div class="header-logo">
+      <a href="../index.html">Hako Finance</a>
+    </div>
+    <p class="introduction">
+      Transfer, get, lend, borrow, and credit creation, all transactions are realized on Hako Finance! 
+      Welcome to next-generation DeFi!
+    </p>
+  </header>
+  <div class="container">
+    <div class="transactions">
+      <div class="transaction" id="lendCredit">
+        <h2>lend credit</h2>
+        <p>Lend your credit to another member account.<br>
+          (You can't lend more credit than the borrower registered and you can't lend credit for more duration than the borrower registered.)</p>
+        to who? <input class="question" type="text" name="to" v-model="to"><br>
+        how much? <input class="question" type="text" name="value" v-model="value"><br>
+        how long? 
+        <input class="question duration" type="text" name="duration" v-model="days">days
+        <input class="question duration" type="text" name="duration" v-model="hours">hours
+        <input class="question duration" type="text" name="duration" v-model="minutes">minutes
+        <input class="question duration" type="text" name="duration" v-model="seconds">seconds<br>
+        <button class="button" @click="lendCreditCheck">check</button>
+        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+        <button class="button" @click="lendCredit" v-show="ok && active">lend</button>
+        <p>{{txStatus}}</p>
+      </div>
+    </div> 
+  </div>
+  <footer>
+  </footer>  
+  <script>
+    var hakoAddress;
+    var hako;
+    var userAccount;
+    async function startApp() {
+      hakoAddress = "0xc00523a058de5fdebf17ff735d29368e7c9ae114";
+      hako = new web3.eth.Contract(hakoABI, hakoAddress);
+      userAccount = await web3.eth.getCoinbase();
+    }
+
+    window.addEventListener('load', function () {
+      if (typeof web3 !== 'undefined') {
+        web3 = new Web3(window.ethereum);
+        console.log('web3 created!');
+      } else {
+        alert('install wallet!');
+        console.log('install wallet!');
+      }
+      startApp();
+    });
+
+    var lendCreditVM = new Vue({
+      el: '#lendCredit',
+      data: {
+        to: '',
+        value: '',
+        duration: '',
+        days: '',
+        hours: '',
+        minutes: '',
+        seconds: '',
+        memberOrNotOfTo: '',
+        creditToHakoOfUser: '',
+        debtToHakoOfTo: '',
+        borrowValueDurationOfTo: '',
+        valueDuration: {
+          value: '',
+          duration: ''
+        },
+        noCheckSentence: '',
+        okCheckSentence: '',
+        ok: '',
+        active: false,
+        txStatus: ''
+      },
+      methods: {
+        lendCreditCheck: async function() {
+          this.ok = false;
+          this.duration = 
+          Number(this.days) * 24 * 60 * 60 + Number(this.hours) * 60 * 60 + Number(this.minutes) * 60 + Number(this.seconds);
+          if (!this.to || !this.value || !this.duration) {
+            this.noCheckSentence = "Please input a value!";
+            this.active = !this.active;
+            return;
+          }
+          try {
+            this.memberOrNotOfTo = await hako.methods.memberCheckOf(this.to).call();
+          } catch (error) {
+            this.noCheckSentence = "Please input an address exactly!";
+            this.active = !this.active;
+            return;
+          }
+          this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
+          this.debtToHakoOfTo = await hako.methods.debtToHakoOf(this.to).call();
+          this.borrowValueDurationOfTo = await hako.methods.getBorrowValueDurationOf(this.to).call();
+          this.valueDuration.value = this.borrowValueDurationOfTo['0'];
+          this.valueDuration.duration = this.borrowValueDurationOfTo['1'];
+          if (this.to.toUpperCase() === userAccount.toUpperCase()) {
+            this.noCheckSentence = 
+            "NO! You can't lend your credit to yourself!";
+          } else if (this.memberOrNotOfTo !== '1') {
+            this.noCheckSentence = 
+            "NO! <" + this.to + "> is not a member account! You can't lend your credit to non-member account!";
+          } else if (Number(this.value) > Number(this.creditToHakoOfUser)) {
+            this.noCheckSentence = 
+            "NO! You have only " + this.creditToHakoOfUser + " credit! " + this.value + " is over!";
+          } else if (this.debtToHakoOfTo !== '0') {
+            this.noCheckSentence = 
+            "NO! <" + this.to + "> has debt to Hako! You can't lend your credit to the account that has debt to Hako!";
+          } else if (Number(this.value) > Number(this.valueDuration.value)) {
+            this.noCheckSentence = 
+            "NO! The borrower wants to borrow only " + this.valueDuration.value + " credit! " + this.value + " is over!";
+          } else if (Number(this.duration) < Number(this.valueDuration.duration)) {
+            this.noCheckSentence = 
+            "NO! The borrower wants to borrow credit for " + this.valueDuration.duration + " seconds over! " + 
+            this.duration + " seconds is not enough!";
+          } else {
+            this.okCheckSentence = 
+            "OK! You lend " + this.value + " credit to <" + this.to + "> for " + this.duration + " seconds!";
+            this.ok = true;
+          }
+          this.active = !this.active;
+        },
+        lendCredit: function() {
+          this.txStatus = "Lending credit on the blockchain. This may take a while...";
+          return hako.methods.lendCredit(this.to, Number(this.value), Number(this.duration))
+            .send({ from: userAccount })
+            .on("receipt", function (receipt) {
+              lendCreditVM.txStatus = "";
+              alert('Transaction successed!');
+            })
+            .on("error", function (error) {
+              lendCreditVM.txStatus = "";
+              alert('Transaction errored!');
+            });
+        }
+      }
+    });
+  </script>
+</body>
+</html>
