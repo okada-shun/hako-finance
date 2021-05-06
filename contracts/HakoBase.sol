@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
-import "./BasicToken.sol";
+import "./HakoOwner.sol";
 
 ///@title Hako base
-///@notice creditToHako plays the role of 'currency' in the hako
+///@notice creditToHako plays the role of 'currency'
 ///@notice A's credit to B = B's debt to A
-contract HakoBase is BasicToken {
+contract HakoBase is HakoOwner {
 
   event JoinHako(address indexed newMember, uint256 value);
   event LeaveHako(address indexed member);
@@ -16,9 +16,6 @@ contract HakoBase is BasicToken {
 
   ///@notice Hako contract's address as hako address
   address public hakoAddress;
-
-  ///@notice 1 if the address is a member, 0 if not
-  mapping(address => uint256) internal memberCheck;
 
   ///@notice The number of hako members
   uint256 internal memberCount_;
@@ -45,16 +42,6 @@ contract HakoBase is BasicToken {
   ///@notice member's credit to hako = hako's debt to member
   uint256 internal hakoDebt_;
 
-  modifier onlyMember(address _who) {
-    require(memberCheck[_who] == 1);
-    _;
-  }
-
-  modifier onlyNonMember(address _who) {
-    require(memberCheck[_who] == 0);
-    _;
-  }
-
   modifier haveNotDebtToHako(address _member) {
     require(debtToHako[_member] == 0);
     _;
@@ -65,7 +52,7 @@ contract HakoBase is BasicToken {
     _;
   }
 
-  ///@notice Gets the balance of token of the hako address
+  ///@notice Gets the balance of token of hako address
   function balanceOfHako() public view returns (uint256) {
     return balances[hakoAddress];
   }
@@ -94,8 +81,9 @@ contract HakoBase is BasicToken {
     return debtToHako[_member];
   }
 
-  ///@notice New member joins the hako
-  ///@param _value The amount of token that new member deposits(lends) to the hako
+  ///@notice New member joins hako
+  ///@notice Hako owner can't join
+  ///@param _value The amount of token that new member deposits(lends) to hako
   function joinHako(
     uint256 _value
   ) 
@@ -103,6 +91,7 @@ contract HakoBase is BasicToken {
     onlyNonMember(msg.sender) 
     returns (bool) 
   {
+    require(msg.sender != hakoOwner, "Hako owner can't join Hako!");
     require(_value <= balances[msg.sender], "Value is too much!");
     _transfer(msg.sender, hakoAddress, _value);
     _membersCreditToHakoHakosDebtToMember(1, msg.sender, _value);
@@ -112,7 +101,7 @@ contract HakoBase is BasicToken {
     return true;
   }
 
-  ///@notice Member leaves the hako
+  ///@notice Member leaves hako
   function leaveHako() 
     public 
     onlyMember(msg.sender) 
@@ -141,8 +130,8 @@ contract HakoBase is BasicToken {
     return memberCheck[_who];
   }
 
-  ///@notice Member deposits his token to the hako
-  ///@param _value The amount of token that the member deposits(lends) to the hako
+  ///@notice Member deposits his token to hako
+  ///@param _value The amount of token that the member deposits(lends) to hako
   function depositToken(
     uint256 _value
   ) 
@@ -158,7 +147,7 @@ contract HakoBase is BasicToken {
   }
 
   ///@notice Member withdraws token from hako contract
-  ///@param _value The amount of token that the member withdraws from the hako
+  ///@param _value The amount of token that the member withdraws from hako
   function withdrawToken(
     uint256 _value
   ) 
@@ -174,8 +163,8 @@ contract HakoBase is BasicToken {
   }
 
   ///@notice The base function to withdraw token from hako
-  ///@param _member The member address who withdraws token from the hako
-  ///@param _value The amount of token that the member withdraws from the hako
+  ///@param _member The member address who withdraws token from hako
+  ///@param _value The amount of token that the member withdraws from hako
   function _withdrawToken(address _member, uint256 _value) internal {
     if (_value <= balances[hakoAddress]) {
       _transfer(hakoAddress, _member, _value);
