@@ -12,14 +12,17 @@ contract Hako is CreditCreation {
   
   ///@notice hakoAddress is this contract's address
   ///@param initialSupply Initial supply of hako token
+  ///@param initialUpperLimit Initial upper limit of borrowing and credit creation value
   ///@param hakoName Hako's name
   ///@param hakoSymbol Hako's symbol
-  constructor(uint256 initialSupply, string hakoName, string hakoSymbol) public {
+  constructor(uint256 initialSupply, uint256 initialUpperLimit, string hakoName, string hakoSymbol) public {
+    hakoOwner = msg.sender;
     hakoAddress = address(this);
     totalSupply_ = initialSupply;
+    upperLimit = initialUpperLimit;
     name = hakoName;
     symbol = hakoSymbol;
-    balances[msg.sender] = initialSupply;
+    balances[hakoOwner] = initialSupply;
   }
   
 }
