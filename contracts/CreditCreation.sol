@@ -20,7 +20,7 @@ contract CreditCreation is Lend {
     haveNotDebtToHako(msg.sender) 
     returns (bool) 
   {
-    //require(_value <= 10000);
+    require(_value <= upperLimit, "Value is over upper limit!");
     uint256 assets = balances[msg.sender].add(creditToHako[msg.sender]).add(creditToMember[msg.sender]);
     uint256 debts = debtToHako[msg.sender].add(debtToMember[msg.sender]);
     require(assets >= debts, "netAssets is minus!");
