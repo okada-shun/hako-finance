@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.9/web3.min.js"></script>
   <script src="../Hako_abi.js"></script>
+  <script src="../hakoAddress.js"></script>
 </head>
 <body>
   <header>
@@ -38,11 +39,9 @@
   <footer>
   </footer>  
   <script>
-    var hakoAddress;
     var hako;
     var userAccount;
     async function startApp() {
-      hakoAddress = "0xc00523a058de5fdebf17ff735d29368e7c9ae114";
       hako = new web3.eth.Contract(hakoABI, hakoAddress);
       userAccount = await web3.eth.getCoinbase();
     }
