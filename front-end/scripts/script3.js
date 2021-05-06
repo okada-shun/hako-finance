@@ -1,8 +1,6 @@
-var hakoAddress;
 var hako;
 var userAccount;
 async function startApp() {
-  hakoAddress = "0xc00523a058de5fdebf17ff735d29368e7c9ae114";
   hako = new web3.eth.Contract(hakoABI, hakoAddress);
   userAccount = await web3.eth.getCoinbase();
   appVM.hakoData.hakoAddress = hakoAddress;
