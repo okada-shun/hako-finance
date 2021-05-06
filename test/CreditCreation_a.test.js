@@ -8,7 +8,7 @@ const time = require("./helpers/time");
 contract('CreditCreation_a', ([alice, bob, carol, dave, ...accounts]) => {
   
   beforeEach(async function () {
-    this.hako = await Hako.new(1000, 'HakoExample', 'HKEX', {from: alice});
+    this.hako = await Hako.new(1000, 500, 'HakoExample', 'HKEX', {from: alice});
   });
 
   describe('creditCreationByMember', () => {
@@ -90,6 +90,18 @@ contract('CreditCreation_a', ([alice, bob, carol, dave, ...accounts]) => {
       await this.hako.collectDebtFrom(carol, 1, {from: bob});
       //carol has 100 debtToHako
       await utils.shouldThrow(this.hako.creditCreationByMember(100, {from: carol}));
+    });
+
+    it('should not allow hako members to register more borrowValue than upperLimit', async function () {
+      await this.hako.transfer(bob, 700, {from: alice});
+      await this.hako.transfer(carol, 200, {from: alice});
+      await this.hako.transfer(dave, 100, {from: alice});
+      await this.hako.joinHako(700, {from: bob});
+      await this.hako.joinHako(200, {from: carol});
+      await this.hako.joinHako(100, {from: dave});
+      //upperLimit is 500
+      //netAssets of bob is 700
+      await utils.shouldThrow(this.hako.creditCreationByMember(700, {from: bob}));
     });
 
     it('should not allow hako members whose netAssets is minus to create creditToHako', async function () {

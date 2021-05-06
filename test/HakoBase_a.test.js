@@ -5,10 +5,10 @@ const Hako = artifacts.require('./Hako.sol');
 const utils = require("./helpers/utils");
 const time = require("./helpers/time");
 
-contract.skip('HakoBase_a', ([alice, bob, carol, dave, ...accounts]) => {
+contract('HakoBase_a', ([alice, bob, carol, dave, ...accounts]) => {
 
   beforeEach(async function () {
-    this.hako = await Hako.new(1000, 'HakoExample', 'HKEX', {from: alice});
+    this.hako = await Hako.new(1000, 500, 'HakoExample', 'HKEX', {from: alice});
   });
 
   it('should have correct balanceOf hako', async function () {
@@ -75,6 +75,14 @@ contract.skip('HakoBase_a', ([alice, bob, carol, dave, ...accounts]) => {
       await this.hako.joinHako(300, {from: bob});
       //bob has already been a hako member
       await utils.shouldThrow(this.hako.joinHako(300, {from: bob}));  
+    });
+
+    it('should not allow hakoOwner to join hako', async function () {
+      await this.hako.transfer(bob, 300, {from: alice});
+      await this.hako.transfer(carol, 200, {from: alice});
+      await this.hako.transfer(dave, 100, {from: alice});
+      //alice is hako owner
+      await utils.shouldThrow(this.hako.joinHako(400, {from: alice}));
     });
 
     it('should not allow accounts to deposit more token than they have when joining hako', async function () {

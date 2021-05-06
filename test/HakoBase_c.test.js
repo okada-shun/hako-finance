@@ -5,10 +5,10 @@ const Hako = artifacts.require('./Hako.sol');
 const utils = require("./helpers/utils");
 const time = require("./helpers/time");
 
-contract.skip('HakoBase_c', ([alice, bob, carol, dave, ...accounts]) => {
+contract('HakoBase_c', ([alice, bob, carol, dave, ...accounts]) => {
 
   beforeEach(async function () {
-    this.hako = await Hako.new(1000, 'HakoExample', 'HKEX', {from: alice});
+    this.hako = await Hako.new(1000, 500, 'HakoExample', 'HKEX', {from: alice});
   });
 
   describe('transferCredit', () => {

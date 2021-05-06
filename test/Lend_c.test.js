@@ -11,10 +11,10 @@ const should = require('chai')
 const Hako = artifacts.require('./Hako.sol');
 const time = require("./helpers/time");
 
-contract.skip('Lend_c', ([alice, bob, carol, dave, ...accounts]) => {
+contract('Lend_c', ([alice, bob, carol, dave, ...accounts]) => {
   
   beforeEach(async function () {
-    this.hako = await Hako.new(1000, 'HakoExample', 'HKEX', {from: alice});
+    this.hako = await Hako.new(1000, 500, 'HakoExample', 'HKEX', {from: alice});
   });
 
   describe('getLendRecords', () => {
