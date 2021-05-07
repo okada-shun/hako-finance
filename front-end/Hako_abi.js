@@ -113,6 +113,25 @@ var hakoABI = [
     "type": "function"
   },
   {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_value",
+        "type": "uint256"
+      }
+    ],
+    "name": "changeUpperLimit",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "constant": true,
     "inputs": [
       {
@@ -184,6 +203,20 @@ var hakoABI = [
     "type": "function"
   },
   {
+    "constant": true,
+    "inputs": [],
+    "name": "upperLimit",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": false,
     "inputs": [
       {
@@ -214,6 +247,25 @@ var hakoABI = [
     ],
     "payable": false,
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_newHakoOwner",
+        "type": "address"
+      }
+    ],
+    "name": "changeHakoOwner",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -294,6 +346,20 @@ var hakoABI = [
   },
   {
     "constant": true,
+    "inputs": [],
+    "name": "hakoOwner",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
     "inputs": [
       {
         "name": "_owner",
@@ -320,6 +386,20 @@ var hakoABI = [
       }
     ],
     "name": "debtToHakoOf",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "balanceOfHakoOwner",
     "outputs": [
       {
         "name": "",
@@ -630,6 +710,10 @@ var hakoABI = [
         "type": "uint256"
       },
       {
+        "name": "initialUpperLimit",
+        "type": "uint256"
+      },
+      {
         "name": "hakoName",
         "type": "string"
       },
@@ -857,6 +941,40 @@ var hakoABI = [
       }
     ],
     "name": "TransferCredit",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "oldHakoOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "name": "newHakoOwner",
+        "type": "address"
+      }
+    ],
+    "name": "ChangeHakoOwner",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "hakoOwner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "newUpperLimit",
+        "type": "uint256"
+      }
+    ],
+    "name": "ChangeUpperLimit",
     "type": "event"
   },
   {
