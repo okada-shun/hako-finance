@@ -1,1 +1,1 @@
-var hakoAddress = "0xc00523a058de5fdebf17ff735d29368e7c9ae114";
+var hakoAddress = "0x7e6041b5d7ffee660466f09d9c3cb83bd342ca58";
