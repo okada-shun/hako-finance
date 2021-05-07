@@ -77,6 +77,16 @@
             this.active = !this.active;
             return;
           }
+          if (isNaN(this.value)) {
+            this.noCheckSentence = "Please input a value as number!";
+            this.active = !this.active;
+            return;
+          }
+          if (!Number.isInteger(Number(this.value))) {
+            this.noCheckSentence = "Please input a value as integer!";
+            this.active = !this.active;
+            return;
+          }
           try {
             await hako.methods.balanceOf(this.to).call();
           } catch (error) {

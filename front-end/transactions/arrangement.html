@@ -76,6 +76,16 @@
             this.active = !this.active;
             return;
           }
+          if (isNaN(this.value)) {
+            this.noCheckSentence = "Please input a value as number!";
+            this.active = !this.active;
+            return;
+          }
+          if (!Number.isInteger(Number(this.value))) {
+            this.noCheckSentence = "Please input a value as integer!";
+            this.active = !this.active;
+            return;
+          }
           this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
           this.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
           if (Number(this.value) > Number(this.creditToHakoOfUser)) {
