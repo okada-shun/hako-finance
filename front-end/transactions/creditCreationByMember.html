@@ -67,6 +67,7 @@
         creditToMemberOfUser: '',
         debtToMemberOfUser: '',
         netAssetsOfUser: '',
+        upperLimit: '',
         noCheckSentence: '',
         okCheckSentence: '',
         ok: '',
@@ -81,6 +82,16 @@
             this.active = !this.active;
             return;
           }
+          if (isNaN(this.value)) {
+            this.noCheckSentence = "Please input a value as number!";
+            this.active = !this.active;
+            return;
+          }
+          if (!Number.isInteger(Number(this.value))) {
+            this.noCheckSentence = "Please input a value as integer!";
+            this.active = !this.active;
+            return;
+          }
           this.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
           this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
           this.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
@@ -88,7 +99,12 @@
           this.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
           this.netAssetsOfUser = Number(this.balanceOfUser) + Number(this.creditToHakoOfUser)
            - Number(this.debtToHakoOfUser) + Number(this.creditToMemberOfUser) - Number(this.debtToMemberOfUser);
-          if (Number(this.value) > Number(this.netAssetsOfUser)) {
+          this.upperLimit = await hako.methods.upperLimit().call();
+          if (Number(this.value) > Number(this.upperLimit)) {
+            this.noCheckSentence = 
+            "NO! The upper limit is " + this.upperLimit + "! You can't create more than "
+              + this.upperLimit + " credit!";
+          } else if (Number(this.value) > Number(this.netAssetsOfUser)) {
             this.noCheckSentence = 
             "NO! Your net assets is only " + this.netAssetsOfUser + "! You can't create more than " + this.netAssetsOfUser + " credit!";
           } else {

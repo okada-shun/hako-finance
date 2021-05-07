@@ -77,6 +77,7 @@
         creditToMemberOfUser: '',
         debtToMemberOfUser: '',
         netAssetsOfUser: '',
+        upperLimit: '',
         noCheckSentence: '',
         okCheckSentence: '',
         ok: '',
@@ -86,15 +87,30 @@
       methods: {
         registerBorrowValueDurationCheck: async function() {
           this.ok = false;
-          this.duration = 
-          Number(this.days) * 24 * 60 * 60 + Number(this.hours) * 60 * 60
-            + Number(this.minutes) * 60 + Number(this.seconds);
-          if (!this.value || !this.duration) {
+          if (!this.value) {
             this.noCheckSentence = "Please input a value!";
             this.active = !this.active;
             return;
           }
-          
+          if (!this.days && !this.hours && !this.minutes && !this.seconds) {
+            this.noCheckSentence = "Please input a value!";
+            this.active = !this.active;
+            return;
+          }
+          if (isNaN(this.value) || isNaN(this.days) || isNaN(this.hours) || isNaN(this.minutes) || isNaN(this.seconds)) {
+            this.noCheckSentence = "Please input a value as number!";
+            this.active = !this.active;
+            return;
+          }
+          if (!Number.isInteger(Number(this.value)) || !Number.isInteger(Number(this.days)) || !Number.isInteger(Number(this.hours))
+           || !Number.isInteger(Number(this.minutes)) || !Number.isInteger(Number(this.seconds))) {
+            this.noCheckSentence = "Please input a value as integer!";
+            this.active = !this.active;
+            return;
+          }
+          this.duration = 
+          Number(this.days) * 24 * 60 * 60 + Number(this.hours) * 60 * 60
+           + Number(this.minutes) * 60 + Number(this.seconds);
           this.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
           this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
           this.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
@@ -102,7 +118,12 @@
           this.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
           this.netAssetsOfUser = Number(this.balanceOfUser) + Number(this.creditToHakoOfUser)
            - Number(this.debtToHakoOfUser) + Number(this.creditToMemberOfUser) - Number(this.debtToMemberOfUser);
-          if (Number(this.value) > this.netAssetsOfUser) {
+          this.upperLimit = await hako.methods.upperLimit().call();
+          if (Number(this.value) > Number(this.upperLimit)) {
+            this.noCheckSentence = 
+            "NO! The upper limit is " + this.upperLimit + "! You can't register more than "
+              + this.upperLimit + " credit!";
+          } else if (Number(this.value) > this.netAssetsOfUser) {
             this.noCheckSentence = 
             "NO! Your net assets is only " + this.netAssetsOfUser + "! You can't register more than "
               + this.netAssetsOfUser + " credit!";
