@@ -244,6 +244,7 @@ contract('HakoBase_a', ([alice, bob, carol, dave, ...accounts]) => {
         await this.hako.leaveHako({from: bob});
       const event = await expectEvent.inLogs(logs, 'LeaveHako');
       assert.equal(event.args.member, bob);
+      assert.equal(event.args.value, 300);
     });
 
   });
