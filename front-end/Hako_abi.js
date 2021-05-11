@@ -191,11 +191,11 @@ var hakoABI = [
   {
     "constant": true,
     "inputs": [],
-    "name": "getCreditToMemberIds",
+    "name": "upperLimit",
     "outputs": [
       {
         "name": "",
-        "type": "uint256[]"
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -205,7 +205,7 @@ var hakoABI = [
   {
     "constant": true,
     "inputs": [],
-    "name": "upperLimit",
+    "name": "lendCount_",
     "outputs": [
       {
         "name": "",
@@ -533,20 +533,6 @@ var hakoABI = [
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [],
-    "name": "getDebtToMemberIds",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256[]"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "constant": false,
     "inputs": [
       {
@@ -807,6 +793,11 @@ var hakoABI = [
       },
       {
         "indexed": false,
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
         "name": "time",
         "type": "uint256"
       }
@@ -882,6 +873,11 @@ var hakoABI = [
         "indexed": true,
         "name": "member",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "value",
+        "type": "uint256"
       }
     ],
     "name": "LeaveHako",
