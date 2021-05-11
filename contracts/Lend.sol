@@ -8,7 +8,7 @@ import "./HakoBase.sol";
 contract Lend is HakoBase {
 
   event RegisterBorrowValueDuration(address indexed member, uint256 value, uint256 duration);
-  event LendCredit(address indexed from, address indexed to, uint256 value, uint256 duration, uint256 time); 
+  event LendCredit(address indexed from, address indexed to, uint256 value, uint256 duration, uint256 id, uint256 time); 
   event CollectDebtFrom(address indexed creditor, address indexed debtor, uint256 id);
   event ReturnDebtTo(address indexed debtor, address indexed creditor, uint256 id);
 
@@ -32,7 +32,7 @@ contract Lend is HakoBase {
 
   ///@notice The number of lending count
   ///@notice Added every time lending is done
-  uint256 internal lendCount_;
+  uint256 public lendCount_;
   
   ///@notice Created LendRecords are stored in this
   LendRecord[] public lendRecords;
@@ -73,28 +73,12 @@ contract Lend is HakoBase {
     return borrowValueDuration[_member];
   }
 
-  ///@notice Stores lending-record in lendRecords
-  ///@notice lendCount_ is lendRecordId
-  ///@param _from The address to lend creditToHako (= creditor member)
-  ///@param _to The address to be lended (= debtor member)
-  ///@param _value The amount of creditToHako to be lended
-  ///@param _duration The duration of lending
-  function _lendRecording(
-    address _from, 
-    address _to, 
-    uint256 _value, 
-    uint256 _duration
-  ) 
-    internal 
-  {
-    lendCount_ = lendCount_.add(1);
-    lendRecords.push(LendRecord(lendCount_, _from, _to, _value, _duration, now, 1));
-  }
-
   ///@notice Lend some creditToHako to the other member 
   ///@param _to The address to lend to (= debtor, msg.sender is creditor)
   ///@param _value The amount of creditToHako to be lended
   ///@param _duration The duration of lending
+  ///@notice lendCount_ is lendRecordId
+  ///@notice Stores lending-record in lendRecords
   ///@notice msg.sender's(creditor's) creditToMember = _to's(debtor's) debtToMember
   function lendCredit(
     address _to, 
@@ -115,15 +99,18 @@ contract Lend is HakoBase {
     _transferCredit(msg.sender, _to, _value);
     _membersCreditToMemberMembersDebtToMember(1, msg.sender, _to, _value);
     borrowValueDuration[_to][0] = borrowValueDuration[_to][0].sub(_value);
-    _lendRecording(msg.sender, _to, _value, _duration);
-    emit LendCredit(msg.sender, _to, _value, _duration, now);
+    lendCount_ = lendCount_.add(1);
+    uint256 id = lendCount_;
+    uint256 time = now;
+    lendRecords.push(LendRecord(id, msg.sender, _to, _value, _duration, time, 1));
+    emit LendCredit(msg.sender, _to, _value, _duration, id, time);
     return true;
   }
 
   ///@notice Creditor member collects debt from debtor member
   ///@param _debtor The address of debtor member (corresponds to lendCredit function's _to param)
   ///@param _id The number of lendRecordId
-  ///@dev Due to _lendRecording function, there is a gap between _id and lendRecords's index
+  ///@dev Due to lendCredit function, there is a gap between _id and lendRecords's index
   function collectDebtFrom(address _debtor, uint256 _id) public returns (bool) {
     uint newId = _id.sub(1);
     require(lendRecords[newId].lendBackChecker_ == 1, "BackChecker error!");
@@ -193,32 +180,6 @@ contract Lend is HakoBase {
   ///@param _debtor The address to query the amount of debtToMember
   function debtToMemberOf(address _debtor) public view returns (uint256) {
     return debtToMember[_debtor];
-  }
-
-  ///@notice Gets lendRecordId of creditor member's credit to other member
-  function getCreditToMemberIds() public view returns (uint256[]) {
-    uint256[] memory creditToMemberIds = new uint256[](lendRecords.length);
-    uint256 counter = 0;
-    for (uint i; i < lendRecords.length; i++) {
-      if (lendRecords[i].lendFrom_ == msg.sender && lendRecords[i].lendBackChecker_ == 1) {
-        creditToMemberIds[counter] = lendRecords[i].lendRecordId_;
-        counter = counter.add(1);
-      }
-    }
-    return creditToMemberIds;
-  }
-
-  ///@notice Gets lendRecordId of debtor member's debt to other member
-  function getDebtToMemberIds() public view returns (uint256[]) {
-    uint256[] memory debtToMemberIds = new uint256[](lendRecords.length);
-    uint256 counter = 0;
-    for (uint i; i < lendRecords.length; i++) {
-      if (lendRecords[i].lendTo_ == msg.sender && lendRecords[i].lendBackChecker_ == 1) {
-        debtToMemberIds[counter] = lendRecords[i].lendRecordId_;
-        counter = counter.add(1);
-      }
-    }
-    return debtToMemberIds;
   }
 
 }
