@@ -9,7 +9,7 @@ import "./HakoOwner.sol";
 contract HakoBase is HakoOwner {
 
   event JoinHako(address indexed newMember, uint256 value);
-  event LeaveHako(address indexed member);
+  event LeaveHako(address indexed member, uint256 value);
   event DepositToken(address indexed member, uint256 value);
   event WithdrawToken(address indexed member, uint256 value);
   event TransferCredit(address indexed from, address indexed to, uint256 value);
@@ -109,12 +109,12 @@ contract HakoBase is HakoOwner {
     haveNotDebtToMember(msg.sender) 
     returns (bool) 
   {
+    uint256 backValue = creditToHako[msg.sender];
     require(creditToMember[msg.sender] == 0);
-    _withdrawToken(msg.sender, creditToHako[msg.sender]);
-    _membersCreditToHakoHakosDebtToMember(0, msg.sender, creditToHako[msg.sender]);
+    _withdrawToken(msg.sender, backValue);
     memberCount_ = memberCount_.sub(1);
     memberCheck[msg.sender] = 0;
-    emit LeaveHako(msg.sender);
+    emit LeaveHako(msg.sender, backValue);
     return true;
   }
 
