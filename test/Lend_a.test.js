@@ -246,11 +246,13 @@ contract('Lend_a', ([alice, bob, carol, dave, ...accounts]) => {
       const {logs} = 
         await this.hako.lendCredit(carol, 100, 60, {from: bob});
       const event = await expectEvent.inLogs(logs, 'LendCredit');
+      const lendRecords = await this.hako.getLendRecords(1, {from: alice});
       assert.equal(event.args.from, bob);
       assert.equal(event.args.to, carol);
       assert.equal(event.args.value, 100);
       assert.equal(event.args.duration, 60);
-      assert.equal(event.args.time, event.args.time);
+      assert.equal(event.args.id, 1);
+      lendRecords[5].should.be.bignumber.equal(event.args.time);
     });
       
   });
