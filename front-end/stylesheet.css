@@ -1,23 +1,22 @@
 body {
   margin: 0;
-  font-family: 'Courier New', Courier, monospace;
   background-image:
 	 linear-gradient(-90deg, chocolate 50%, blanchedalmond 50%);
 	background-size: 40px 40px;
 }
 
 header {
-  height: 170px;
+  height: 200px;
   background-color: blanchedalmond;
-  margin: 20px auto;
-  width: 740px;
+  margin: 30px auto;
+  width: 1000px;
   border: solid 3px saddlebrown;
   border-radius: 20px;
 }
 
 .header-logo {
   font-family: 'Londrina Shadow', cursive;
-  font-size: 70px;
+  font-size: 80px;
   text-align: center;
   padding-top: 20px;
   padding-bottom: 20px;
@@ -36,15 +35,15 @@ a:hover {
   text-align: center;
   display: block;
   margin: 0 auto;
+  padding: 0 20px;
 }
 
 .container {
   margin-top: 20px;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 150px;
-  width: 740px;
-  border-radius: 20px;
+  margin-bottom: 250px;
+  width: 1050px;
 }
 
 .tab-pane ul {
@@ -55,7 +54,7 @@ a:hover {
   list-style: none;
   margin: 0 auto;
   display: inline-block;
-  width: 740px;
+  width: 1050px;
 }
 
 .tab-item {
@@ -63,7 +62,7 @@ a:hover {
   display: inline-block;
   background-color:blanchedalmond;
   padding: 10px;
-  width: 200px;
+  width: 219px;
   text-align: center;
   border: solid 1px saddlebrown;
   border-radius: 10px;
@@ -83,18 +82,24 @@ li {
 }
 
 h1 {
-  font-family: 'Londrina Shadow', cursive;
   font-size: 40px;
-  padding: 20px;
+  padding: 20px 40px;
 }
 
 .hakoInfo {
   background-color: blanchedalmond;
   margin-left: auto;
   margin-right: auto;
-  width: 740px;
+  height: 600px;
+  width: 1000px;
   border: solid 3px saddlebrown;
   border-radius: 20px;
+}
+
+.info-content {
+  margin-left: auto;
+  margin-right: auto;
+  width: 775px;
 }
 
 .hakoInfo li {
@@ -105,7 +110,8 @@ h1 {
   background-color: blanchedalmond;
   margin-left: auto;
   margin-right: auto;
-  width: 740px;
+  height: 940px;
+  width: 1000px;
   border: solid 3px saddlebrown;
   border-radius: 20px;
 }
@@ -113,8 +119,8 @@ h1 {
 .infoData {
   text-align: center;
   padding: 10px;
-  height: 50px;
-  width: 300px;
+  height: 57px;
+  width: 320px;
   display: inline-block;
   border: solid 2px chocolate;
   border-radius: 10px;
@@ -124,12 +130,16 @@ h1 {
 .infoAddress {
   text-align: center;
   padding: 10px;
-  height: 50px;
-  width: 630px;
+  height: 57px;
+  width: 670px;
   display: inline-block;
   border: solid 2px chocolate;
   border-radius: 10px;
   margin: 10px auto;
+}
+
+span {
+  color: red;
 }
 
 .memberCheck {
@@ -137,10 +147,10 @@ h1 {
 }
 
 .supplement {
-  font-size: 15px;
+  font-size: 18px;
   text-align: center;
   padding: 10px;
-  height: 50px;
+  height: 57px;
   width: 300px;
   display: inline-block;
   margin: 10px auto;
@@ -150,45 +160,38 @@ h1 {
   background-color: blanchedalmond;
   margin-left: auto;
   margin-right: auto;
-  width: 740px;
+  width: 1000px;
   border: solid 3px saddlebrown;
   border-radius: 20px;
 }
 
 .enter {
-  margin: 27px auto;
+  margin: 15px auto;
   display: inline-block;
   font-size: 18px;
 }
 
 .noDisplay {
-  margin: 27px auto;
+  margin: 15px auto;
   display: inline-block;
   color: red;
   font-size: 18px;
 }
 
 .linkToTransaction {
-  margin: 13px auto;
+  margin: 16px auto;
   display: inline-block;
 }
 
 .transactionLink {
   text-align: center;
-  padding: 10px;
+  padding: 20px 10px;
   height: 120px;
-  width: 300px;
+  width: 320px;
   display: inline-block;
   border: solid 2px chocolate;
   border-radius: 10px;
   margin: 10px auto;
-}
-
-footer {
-  margin-bottom: 0;
-  height: 300px;
-  background-color: blanchedalmond;
-  border-top: solid 3px saddlebrown;
 }
 
 [v-cloak] {
@@ -211,7 +214,15 @@ button:hover {
 }
 
 .transaction {
-  padding: 30px;
+  padding: 30px 50px;
+}
+
+.transaction h2 {
+  padding-bottom: 20px;
+}
+
+.transaction p {
+  font-size: 18px;
 }
 
 .noCheckSentence {
@@ -239,4 +250,35 @@ button:hover {
 
 .duration {
   width: 55px;
+}
+
+.log {
+  width: 700px;
+  border: solid 1px chocolate;
+  border-radius: 10px;
+  background-color:navajowhite;
+  margin: 20px auto;
+}
+
+.log p {
+  font-size: 18px;
+  padding: 10px;
+  margin: 10px;
+}
+
+.log li {
+  font-size: 18px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin: 10px;
+}
+
+.history {
+  padding-bottom: 30px;
+  margin: 0 auto;
+}
+
+.noHistory {
+  font-size: 18px;
+  padding: 10px;
 }
