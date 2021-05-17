@@ -17,6 +17,32 @@
       text-align: center;
       margin-bottom: 50px;
     }
+    .tab-owner {
+      font-size: 30px;
+      display: inline-block;
+      background-color:blanchedalmond;
+      padding: 10px;
+      width: 950px;
+      text-align: center;
+      border: solid 3px saddlebrown;
+      border-radius: 10px;
+      margin: 0 auto;
+    }
+    .hakoInfo {
+      margin-bottom: 30px;
+      height: 800px;
+    }
+    .transactions {
+      margin-bottom: 30px;
+    }
+    .ownerOnlyInfo {
+      background-color: blanchedalmond;
+      margin-left: auto;
+      margin-right: auto;
+      width: 1000px;
+      border: solid 3px saddlebrown;
+      border-radius: 20px;
+    }
   </style>
 </head>
 <body>
@@ -25,7 +51,7 @@
       <a href="index.html">Hako Finance</a>
     </div>
     <p class="introduction">
-      Transfer, get, lend, borrow, and credit creation, all transactions are realized on Hako Finance! 
+      Transfer, get, lend, borrow, and credit creation, all transactions are realized on Hako Finance!<br> 
       Welcome to next-generation DeFi!
     </p>
   </header>
@@ -33,31 +59,30 @@
   <div class="container" id="owner">
     <div class="tab">
       <ul>
-        <li class="tab-item" v-for="(item, index) in items" :key="index" :class="{active: active === index}" @click="activate(index)" v-cloak>
-          {{ item }}
+        <li class="tab-owner">
+          Owner Only
         </li>
       </ul>
     </div>
     <div class="tab-content">
-      <div class="tab-pane hakoInfo" v-show="active === 0 && isHakoOwner">       
+      <div class="tab-pane hakoInfo" v-show="isHakoOwner">       
         <h1>Hako Information</h1>
-        <ul>
-          <li class="infoAddress" v-cloak> Hako's address <br> {{hakoAddress}} </li>
-          <li class="infoAddress" v-cloak> Hako Owner's address <br> {{hakoOwner}} </li>
-          <li class="infoData" v-cloak> Hako's balance of token <br> {{balanceOfHako}} </li>
-          <li class="infoData" v-cloak> Total supply of token <br> {{totalSupply}} </li>
-          <li class="infoData" v-cloak> Hako's credit to Members <br> {{creditOfHako}} </li>
-          <li class="infoData" v-cloak> Hako's debt to Members <br> {{debtOfHako}} </li>
-          <li class="infoData" v-cloak> Owner's balance of token <br> {{balanceOfHakoOwner}} </li>
-          <li class="infoData" v-cloak> Upper limit <br> {{upperLimit}} </li>
-          <li class="infoData" v-cloak> Member Count <br> {{memberCount}} </li>
-        </ul>
+        <div class="info-content">
+          <ul>
+            <li class="infoAddress" v-cloak>Hako's address<br>{{hakoAddress}}</li>
+            <li class="infoAddress" v-cloak>Hako Owner's address<br>{{hakoOwner}}</li>
+            <li class="infoData" v-cloak>Hako's balance of token<br>{{balanceOfHako}}</li>
+            <li class="infoData" v-cloak>Total supply of token<br>{{totalSupply}}</li>
+            <li class="infoData" v-cloak>Hako's credit to Members<br>{{creditOfHako}}</li>
+            <li class="infoData" v-cloak>Hako's debt to Members<br>{{debtOfHako}}</li>
+            <li class="infoData" v-cloak>Owner's balance of token<br>{{balanceOfHakoOwner}}</li>
+            <li class="infoData" v-cloak>Lending count<br>{{lendCount}}</li>
+            <li class="infoData" v-cloak>Member count<br>{{memberCount}}</li>
+            <li class="infoData" v-cloak>Upper limit<br>{{upperLimit}}</li>
+          </ul>
+        </div>
       </div>
-      <div class="tab-pane hakoInfo" v-show="active === 0 && !isHakoOwner">       
-        <h1>Owner Only</h1>
-        <p class="ownerOnly">This page is hako owner only!</p>
-      </div>
-      <div class="tab-pane transactions" v-show="active === 1 && isHakoOwner">
+      <div class="tab-pane transactions" v-show="isHakoOwner">
         <h1>Transactions</h1>
         <div class="transaction changeHakoOwner">
           <h2>change hako owner</h2>
@@ -65,23 +90,66 @@
           (Hako member can't be new hako owner.)</p>
           to who? <input class="question" type="text" name="to" v-model="txDataA.to"><br>
           <button class="button" @click="changeHakoOwnerCheck">check</button>
-          <p class="okCheckSentence" v-show="txDataA.ok && txDataA.active" v-cloak>{{txDataA.okCheckSentence}}</p>
-          <p class="noCheckSentence" v-show="!txDataA.ok && txDataA.active" v-cloak>{{txDataA.noCheckSentence}}</p>
-          <button class="button" @click="changeHakoOwner" v-show="txDataA.ok && txDataA.active">change</button>
-          <p>{{txDataA.txStatus}}</p>
+          <div v-show="isFillA">
+            <p class="okCheckSentence" v-show="txDataA.ok && txDataA.active" v-cloak>{{txDataA.okCheckSentence}}</p>
+            <p class="noCheckSentence" v-show="!txDataA.ok && txDataA.active" v-cloak>{{txDataA.noCheckSentence}}</p>
+            <button class="button" @click="changeHakoOwner" v-show="txDataA.ok && txDataA.active">change</button>
+          </div>
+          <p v-cloak>{{txDataA.txStatus}}</p>
         </div> 
         <div class="transaction changeUpperLimit">
           <h2>change upper limit</h2>
           <p>Change the upper limit of borrowing and credit creation value</p>
           new upper limit <input class="question" type="text" name="value" v-model="txDataB.value"><br>
           <button class="button" @click="changeUpperLimitCheck">check</button>
-          <p class="okCheckSentence" v-show="txDataB.ok && txDataB.active" v-cloak>{{txDataB.okCheckSentence}}</p>
-          <p class="noCheckSentence" v-show="!txDataB.ok && txDataB.active" v-cloak>{{txDataB.noCheckSentence}}</p>
-          <button class="button" @click="changeUpperLimit" v-show="txDataB.ok && txDataB.active">change</button>
-          <p>{{txDataB.txStatus}}</p>
-        </div> 
+          <div v-show="isFillB">
+            <p class="okCheckSentence" v-show="txDataB.ok && txDataB.active" v-cloak>{{txDataB.okCheckSentence}}</p>
+            <p class="noCheckSentence" v-show="!txDataB.ok && txDataB.active" v-cloak>{{txDataB.noCheckSentence}}</p>
+            <button class="button" @click="changeUpperLimit" v-show="txDataB.ok && txDataB.active">change</button>
+          </div>
+          <p v-cloak>{{txDataB.txStatus}}</p>
+        </div>
       </div>
-      <div class="tab-pane hakoInfo" v-show="active === 1 && !isHakoOwner">       
+      <div class="tab-pane transactions" v-show="isHakoOwner"> 
+        <h1>History</h1>
+        <div class="transaction">
+          <h2>owner history</h2>
+          <div class="history">
+            <p>You can watch hako owner transition.</p>     
+            <button class="button" @click="watchOwnerLog">check</button><br>
+            <p v-show="txDataC.loading">Now searching history...</p>
+            <div v-show="!txDataC.loading">
+              <div v-show="txDataC.event.length > 0">
+                <div class="log" v-for="log in txDataC.logs" :key="log.id" v-show="txDataC.active">
+                  <p v-cloak>Hako owner changed from {{log.oldOwner}} to {{log.newOwner}} at {{log.time}}.</p>
+                </div>
+              </div>
+              <div v-show="txDataC.event.length === 0">
+                <p class="noHistory" v-show="txDataC.active">No History</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="transaction">
+          <h2>upper limit history</h2>
+          <div class="history">
+            <p>You can watch upper limit transition.</p>
+            <button class="button" @click="watchUpperLog">check</button><br>
+            <p v-show="txDataD.loading">Now searching history...</p>
+            <div v-show="!txDataD.loading">
+              <div v-show="txDataD.event.length > 0">
+                <div class="log" v-for="log in txDataD.logs" :key="log.id" v-show="txDataD.active">
+                  <p v-cloak>Owner {{log.owner}} changed upper limit to {{log.upperLimit}}.</p>
+                </div>
+              </div>
+              <div v-show="txDataD.event.length === 0">
+                <p class="noHistory" v-show="txDataD.active">No History</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane ownerOnlyInfo" v-show="!isHakoOwner">       
         <h1>Owner Only</h1>
         <p class="ownerOnly">This page is hako owner only!</p>
       </div>
@@ -91,15 +159,29 @@
   </footer>  
   <script>
     var hako;
-    var userAccount;
     var hakoOwner;
+    var userAccount;
+    var balanceOfHako;
+    var totalSupply;
+    var creditOfHako;
+    var debtOfHako;
+    var balanceOfHakoOwner;
+    var memberCount;
+    var upperLimit;
     async function startApp() {
       hako = new web3.eth.Contract(hakoABI, hakoAddress);
-      userAccount = await web3.eth.getCoinbase();
       hakoOwner = await hako.methods.hakoOwner().call();
-      ownerVM.hakoAddress = hakoAddress;
-      ownerVM.userAccount = userAccount;
+      userAccount = await web3.eth.getCoinbase();
       ownerVM.hakoOwner = hakoOwner;
+      ownerVM.userAccount = userAccount;
+      balanceOfHako = await hako.methods.balanceOfHako().call();
+      totalSupply = await hako.methods.totalSupply().call();
+      creditOfHako = await hako.methods.creditOfHako().call();
+      debtOfHako = await hako.methods.debtOfHako().call();
+      balanceOfHakoOwner = await hako.methods.balanceOfHakoOwner().call();
+      lendCount = await hako.methods.lendCount_().call();
+      memberCount = await hako.methods.memberCount().call();
+      upperLimit = await hako.methods.upperLimit().call();
       ownerVM.displayHakoInfo();
     }
 
@@ -117,65 +199,101 @@
     var ownerVM = new Vue({
       el: '#owner',
       data: {
-        active: 0,
-        items: [
-          'Hako Information',
-          'Transactions',
-        ],
-        hakoOwner: '',
-        userAccount: '',
-        hakoAddress: '',
-        totalSupply: '',
-        balanceOfHako: '',
-        creditOfHako: '',
-        debtOfHako: '',
-        balanceOfHakoOwner: '',
-        upperLimit: '',
-        memberCount: '',
+        hakoOwner: '-',
+        userAccount: '-',
+        hakoAddress: '-',
+        totalSupply: '-',
+        balanceOfHako: '-',
+        creditOfHako: '-',
+        debtOfHako: '-',
+        balanceOfHakoOwner: '-',
+        lendCount: '-',
+        memberCount: '-',
+        upperLimit: '-',
         txDataA: {
           to: '',
           memberOrNotOfTo: '',
           noCheckSentence: '',
           okCheckSentence: '',
-          ok: '',
+          ok: false,
           active: false,
+          txData: {
+            to: 'initial'
+          },
           txStatus: ''
         },
         txDataB: {
           value: '',
           noCheckSentence: '',
           okCheckSentence: '',
-          ok: '',
+          ok: false,
           active: false,
+          txData: {
+            value: 'initial'
+          },
           txStatus: ''
         },
+        txDataC: {
+          event: '',
+          loading: false,
+          active: false,
+          txHash: '',
+          blockN: '',
+          blockData: '',
+          logs: {
+            0: {
+              oldOwner: '',
+              newOwner: '',
+              time: ''
+            }
+          }
+        },
+        txDataD: {
+          event: '',
+          loading: false,
+          active: false,
+          txHash: '',
+          blockN: '',
+          blockData: '',
+          logs: {
+            0: {
+              owner: '',
+              upperLimit: '',
+              time: ''
+            }
+          }
+        }
       },
       methods: {
-        activate: function(index) {
-          this.active = index;
-        },
-        displayHakoInfo: async function() {
-          this.hakoOwner = await hako.methods.hakoOwner().call();
-          this.totalSupply = await hako.methods.totalSupply().call();
-          this.balanceOfHako = await hako.methods.balanceOfHako().call();
-          this.creditOfHako = await hako.methods.creditOfHako().call();
-          this.debtOfHako = await hako.methods.debtOfHako().call();
-          this.balanceOfHakoOwner = await hako.methods.balanceOfHakoOwner().call();
-          this.upperLimit = await hako.methods.upperLimit().call();
-          this.memberCount = await hako.methods.memberCount().call();
+        displayHakoInfo: function() {
+          this.hakoAddress = hakoAddress;
+          this.balanceOfHako = balanceOfHako;
+          this.totalSupply = totalSupply;
+          this.creditOfHako = creditOfHako;
+          this.debtOfHako = debtOfHako;
+          this.balanceOfHakoOwner = balanceOfHakoOwner;
+          this.lendCount = lendCount;
+          this.memberCount = memberCount;
+          this.upperLimit = upperLimit;
         },
         changeHakoOwnerCheck: async function() {
+          if (this.txDataA.active === true) {
+            this.txDataA.active = false;
+            return;
+          }
           this.txDataA.ok = false;
           if (!this.txDataA.to) {
             this.txDataA.noCheckSentence = "Please input a value!";
-            this.txDataA.active = !this.txDataA.active;
+            this.txDataA.txData.to = this.txDataA.to;
+            this.txDataA.active = true;
             return;
           }
           try {
             this.txDataA.memberOrNotOfTo = await hako.methods.memberCheckOf(this.txDataA.to).call();
           } catch (error) {
             this.txDataA.noCheckSentence = "Please input an address exactly!";
-            this.txDataA.active = !this.txDataA.active;
+            this.txDataA.txData.to = this.txDataA.to;
+            this.txDataA.active = true;
             return;
           }
           if (this.txDataA.memberOrNotOfTo === '1') {
@@ -186,7 +304,8 @@
             "OK! You, the current hako owner, change owner to <" + this.txDataA.to + ">!";
             this.txDataA.ok = true;
           }
-          this.txDataA.active = !this.txDataA.active;
+          this.txDataA.txData.to = this.txDataA.to;
+          this.txDataA.active = true;
         },
         changeHakoOwner: function() {
           this.txDataA.txStatus = "Changing hako owner on the blockchain. This may take a while...";
@@ -202,26 +321,34 @@
             });
         },
         changeUpperLimitCheck: async function() {
+          if (this.txDataB.active === true) {
+            this.txDataB.active = false;
+            return;
+          }
           this.txDataB.ok = false;
           if (!this.txDataB.value) {
             this.txDataB.noCheckSentence = "Please input a value!";
-            this.txDataB.active = !this.txDataB.active;
+            this.txDataB.txData.value = this.txDataB.value;
+            this.txDataB.active = true;
             return;
           }
           if (isNaN(this.txDataB.value)) {
             this.txDataB.noCheckSentence = "Please input a value as number!";
-            this.txDataB.active = !this.txDataB.active;
+            this.txDataB.txData.value = this.txDataB.value;
+            this.txDataB.active = true;
             return;
           }
           if (!Number.isInteger(Number(this.txDataB.value))) {
             this.txDataB.noCheckSentence = "Please input a value as integer!";
-            this.txDataB.active = !this.txDataB.active;
+            this.txDataB.txData.value = this.txDataB.value;
+            this.txDataB.active = true;
             return;
           }
           this.txDataB.okCheckSentence = 
           "OK! You, the current hako owner, change the upper limit to " + this.txDataB.value + "!";
           this.txDataB.ok = true;
-          this.txDataB.active = !this.txDataB.active;
+          this.txDataB.txData.value = this.txDataB.value;
+          this.txDataB.active = true;
         },
         changeUpperLimit: function() {
           this.txDataB.txStatus = "Changing upper limit on the blockchain. This may take a while...";
@@ -235,11 +362,95 @@
               ownerVM.txDataB.txStatus = "";
               alert('Transaction errored!');
             });
+        },
+        watchOwnerLog: async function() {
+          if (this.txDataC.active === true) {
+            this.txDataC.active = false;
+            return;
+          }
+          if (this.txDataC.event) {
+            this.txDataC.active = true;
+            return;
+          }
+          this.txDataC.loading = true;
+          this.txDataC.event = await hako.getPastEvents("ChangeHakoOwner", {fromBlock: 0, toBlock: "latest"});
+          if (this.txDataC.event.length === 0) {
+            this.txDataC.active = true;
+            this.txDataC.loading = false;
+            return;
+          }
+          for (let i = 0; i < this.txDataC.event.length; i++) {
+            this.txDataC.logs[i].oldOwner = "<" + this.txDataC.event[i].returnValues[0] + ">";
+            this.txDataC.logs[i].newOwner = "<" + this.txDataC.event[i].returnValues[1] + ">";
+            this.txDataC.txHash = this.txDataC.event[i].transactionHash;
+            this.txDataC.blockN = await web3.eth.getTransaction(this.txDataC.txHash);
+            this.txDataC.blockData = await web3.eth.getBlock(this.txDataC.blockN.blockNumber);
+            this.txDataC.logs[i].time = String(new Date(this.txDataC.blockData.timestamp * 1000));
+            if (i + 1 != this.txDataC.event.length) {
+              this.txDataC.logs[i + 1] = {
+                oldOwner: '',
+                newOwner: '',
+                time: ''
+              }
+            }
+          }
+          this.txDataC.active = true;
+          this.txDataC.loading = false;
+        },
+        watchUpperLog: async function() {
+          if (this.txDataD.active === true) {
+            this.txDataD.active = false;
+            return;
+          }
+          if (this.txDataD.event) {
+            this.txDataD.active = true;
+            return;
+          }
+          this.txDataD.loading = true;
+          this.txDataD.event = await hako.getPastEvents("ChangeUpperLimit", {fromBlock: 0, toBlock: "latest"});
+          if (this.txDataD.event.length === 0) {
+            this.txDataD.active = true;
+            this.txDataD.loading = false;
+            return;
+          }
+          for (let i = 0; i < this.txDataD.event.length; i++) {
+            this.txDataD.logs[i].owner = "<" + this.txDataD.event[i].returnValues[0] + ">";
+            this.txDataD.logs[i].upperLimit = this.txDataD.event[i].returnValues[1];
+            this.txDataD.txHash = this.txDataD.event[i].transactionHash;
+            this.txDataD.blockN = await web3.eth.getTransaction(this.txDataD.txHash);
+            this.txDataD.blockData = await web3.eth.getBlock(this.txDataD.blockN.blockNumber);
+            this.txDataD.logs[i].time = String(new Date(this.txDataD.blockData.timestamp * 1000));
+            if (i + 1 != this.txDataD.event.length) {
+              this.txDataD.logs[i + 1] = {
+                owner: '',
+                upperLimit: '',
+                time: ''
+              }
+            }
+          }
+          this.txDataD.active = true;
+          this.txDataD.loading = false;
         }
       },
       computed: {
         isHakoOwner() {
           return this.hakoOwner.toUpperCase() === this.userAccount.toUpperCase();
+        },
+        isFillA() {
+          if (this.txDataA.to === this.txDataA.txData.to) {
+            return true;
+          } else {
+            this.txDataA.active = false;
+            return true;
+          }
+        },
+        isFillB() {
+          if (this.txDataB.value === this.txDataB.txData.value) {
+            return true;
+          } else {
+            this.txDataB.active = false;
+            return true;
+          }
         }
       }
     });
