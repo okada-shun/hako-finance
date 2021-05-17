@@ -17,7 +17,7 @@
       <a href="../index.html">Hako Finance</a>
     </div>
     <p class="introduction">
-      Transfer, get, lend, borrow, and credit creation, all transactions are realized on Hako Finance! 
+      Transfer, get, lend, borrow, and credit creation, all transactions are realized on Hako Finance!<br> 
       Welcome to next-generation DeFi!
     </p>
   </header>
@@ -28,7 +28,8 @@
         <p>Collect your credit from the debtor account.<br>
           (You can't collect your credit if the borrow duration is yet to be passsed.)</p>
         <button class="button" @click="getCreditToMemberInfo">search</button><br>
-        <ul class="creditDebtInfo" v-for="lendRecord in lendRecordsOfUser" :key="lendRecord.id" v-show="lendRecordActive">
+        <p v-show="loading">Now searching your lending records...</p>
+        <ul class="creditDebtInfo" v-for="lendRecord in lendRecordsOfUser" :key="lendRecord.id" v-show="lendRecordActive && !loading">
           <li v-cloak>{{lendRecord.id}}</li>
           <li v-cloak>{{lendRecord.debtor}}</li>
           <li v-cloak>{{lendRecord.value}}</li>
@@ -40,10 +41,12 @@
         from who? <input class="question" type="text" name="debtor" v-model="debtor"><br>
         lending ID: <input class="question" type="text" name="id" v-model="id"><br>
         <button class="button" @click="collectDebtFromCheck">check</button>
-        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
-        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
-        <button class="button" @click="collectDebtFrom" v-show="ok && active">collect</button>
-        <p>{{txStatus}}</p>
+        <div v-show="isFill">
+          <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+          <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+          <button class="button" @click="collectDebtFrom" v-show="ok && active">collect</button>
+        </div>
+        <p v-cloak>{{txStatus}}</p>
       </div>
     </div> 
   </div>
@@ -71,17 +74,11 @@
     var collectDebtFromVM = new Vue({
       el: '#collectDebtFrom',
       data: {
-        debtor: '',
-        id: '',
-        noCheckSentence: '',
-        okCheckSentence: '',
-        ok: '',
-        active: false,
-        creditToMemberIds: '',
-        creditToMemberIDListOfUser: '',
-        rawLendRecord: '',
+        event: '',
+        loading: false,
+        idList: [],
         lendRecordsOfUser: {
-          '0': {
+          0: {
             id: '',
             debtor: '',
             value: '',
@@ -91,72 +88,99 @@
             over: ''
           }
         },
-        lendRecordsNumber: '',
-        lendRecords: '',
         lendRecordActive: false,
+        debtor: '',
+        id: '',
+        noCheckSentence: '',
+        okCheckSentence: '',
+        ok: false,
+        active: false,
+        txData: {
+          debtor: 'initial',
+          id: 'initial',
+        },
         txStatus: ''
       },
       methods: {
         getCreditToMemberInfo: async function() {
-          this.creditToMemberIDListOfUser = [];
-          this.creditToMemberIds = await hako.methods.getCreditToMemberIds().call({from: userAccount});
-          for (ID of this.creditToMemberIds) {
-            if (ID !== '0') {
-              this.creditToMemberIDListOfUser.push(ID);
+          if (this.lendRecordActive === true) {
+            this.lendRecordActive = false;
+            return;
+          }
+          if (this.event) {
+            this.lendRecordActive = true;
+            return;
+          }
+          this.loading = true;
+          this.event = await hako.getPastEvents("LendCredit", {filter: {from: userAccount}, fromBlock: 0, toBlock: "latest"});
+          for (let i = 0; i < this.event.length; i++) {
+            let id = this.event[i].returnValues[4];
+            let lendRecord = await hako.methods.getLendRecords(id).call();
+            if (lendRecord[6] === '1') {
+              this.idList.push(id);
             }
           }
-          this.lendRecordsNumber = 1;
-          for (ID of this.creditToMemberIDListOfUser) {
-            this.rawLendRecord = await hako.methods.getLendRecords(ID).call();
-            this.lendRecordsOfUser[String(this.lendRecordsNumber)] = {
-              id: '',
-              debtor: '',
-              value: '',
-              duration: '',
-              time: '',
-              deadline: '',
-              over: ''
-            };
-            this.lendRecordsOfUser[String(this.lendRecordsNumber)].id = "ID: " + this.rawLendRecord['0'];
-            this.lendRecordsOfUser[String(this.lendRecordsNumber)].debtor = "Debtor: " + this.rawLendRecord['2'];
-            this.lendRecordsOfUser[String(this.lendRecordsNumber)].value = "Value: " + this.rawLendRecord['3'];
-            this.lendRecordsOfUser[String(this.lendRecordsNumber)].duration = "Duration: " + this.rawLendRecord['4'];
-            this.lendRecordsOfUser[String(this.lendRecordsNumber)].time = 
-            "Time: " + String(new Date(Number(this.rawLendRecord['5']) * 1000));
-            this.lendRecordsOfUser[String(this.lendRecordsNumber)].deadline = 
-            "Deadline: " + String(new Date(Number(this.rawLendRecord['5']) * 1000 + Number(this.rawLendRecord['4']) * 1000));
-            if (Number(new Date()) >= Number(this.rawLendRecord['5']) * 1000 + Number(this.rawLendRecord['4']) * 1000) {
-              this.lendRecordsOfUser[String(this.lendRecordsNumber)].over = 
+          for (let j = 0; j < this.idList.length; j++) {
+            let lendRecord = await hako.methods.getLendRecords(this.idList[j]).call();
+            this.lendRecordsOfUser[j].id = "ID: " + lendRecord[0];
+            this.lendRecordsOfUser[j].debtor = "Debtor: " + lendRecord[2];
+            this.lendRecordsOfUser[j].value = "Value: " + lendRecord[3];
+            this.lendRecordsOfUser[j].duration = "Duration: " + lendRecord[4] + " seconds";
+            this.lendRecordsOfUser[j].time = "Time: " + String(new Date(Number(lendRecord[5]) * 1000));
+            this.lendRecordsOfUser[j].deadline = 
+            "Deadline: " + String(new Date(Number(lendRecord[5]) * 1000 + Number(lendRecord[4]) * 1000));
+            if (Number(new Date()) >= Number(lendRecord[5]) * 1000 + Number(lendRecord[4]) * 1000) {
+              this.lendRecordsOfUser[j].over = 
               "Deadline has already passed! You can collect debt!";
             } else {
-              this.lendRecordsOfUser[String(this.lendRecordsNumber)].over = 
+              this.lendRecordsOfUser[j].over = 
               "Deadline has not passed yet! You can't collect debt!";
             }
-            this.lendRecordsNumber = this.lendRecordsNumber + 1;
+            if (j + 1 != this.idList.length) {
+              this.lendRecordsOfUser[j + 1] = {
+                id: '',
+                debtor: '',
+                value: '',
+                duration: '',
+                time: '',
+                deadline: '',
+                over: ''
+              }
+            }
           }
-          this.lendRecordsNumber = '';
-          delete this.lendRecordsOfUser['0'];
-          this.lendRecordActive = !this.lendRecordActive;
+          this.idList = [];
+          this.lendRecordActive = true;
+          this.loading = false;
         },
         collectDebtFromCheck: async function() {
+          if (this.active === true) {
+            this.active = false;
+            return;
+          }
           this.ok = false;
           if (!this.debtor || !this.id) {
             this.noCheckSentence = "Please input a value!";
-            this.active = !this.active;
+            this.txData.debtor = this.debtor;
+            this.txData.id = this.id;
+            this.active = true;
             return;
           }
           try {
             await hako.methods.memberCheckOf(this.debtor).call();
           } catch (error) {
             this.noCheckSentence = "Please input an address exactly!";
-            this.active = !this.active;
+            this.txData.debtor = this.debtor;
+            this.txData.id = this.id;
+            this.active = true;
             return;
           }
           try {
             this.lendRecords = await hako.methods.getLendRecords(this.id).call();
           } catch (error) {
             this.noCheckSentence = "Lending ID error! Make sure ID again!";
-            this.active = !this.active;
+            this.txData.debtor = this.debtor;
+            this.txData.id = this.id;
+            this.active = true;
             return;
           }
           if (this.lendRecords['1'].toUpperCase() !== userAccount.toUpperCase()) {
@@ -171,7 +195,9 @@
             this.okCheckSentence = "OK! You collect " + this.lendRecords['3'] + " debt from <" + this.debtor + ">!";
             this.ok = true;
           }
-          this.active = !this.active;
+          this.txData.debtor = this.debtor;
+          this.txData.id = this.id;
+          this.active = true;
         },
         collectDebtFrom: function() {
           this.txStatus = "Collecting debt from the debtor on the blockchain. This may take a while...";
@@ -185,6 +211,16 @@
             collectDebtFromVM.txStatus = "";
             alert('Transaction errored!');
           });
+        }
+      },
+      computed: {
+        isFill() {
+          if (this.debtor === this.txData.debtor && this.id === this.txData.id) {
+            return true;
+          } else {
+            this.active = false;
+            return true;
+          }
         }
       }
     });
