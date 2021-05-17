@@ -17,7 +17,7 @@
       <a href="../index.html">Hako Finance</a>
     </div>
     <p class="introduction">
-      Transfer, get, lend, borrow, and credit creation, all transactions are realized on Hako Finance! 
+      Transfer, get, lend, borrow, and credit creation, all transactions are realized on Hako Finance!<br> 
       Welcome to next-generation DeFi!
     </p>
   </header>
@@ -25,13 +25,16 @@
     <div class="transactions">
       <div class="transaction" id="depositToken">
         <h2>deposit token</h2>
-        <p>Deposit your token to Hako. (Translate your token into credit.)</p>
+        <p>Deposit your token to Hako.<br>
+          (Translate your token into credit.)</p>
         how much? <input class="question" type="text" name="value" v-model="value"><br>
         <button class="button" @click="depositTokenCheck">check</button>
-        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
-        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
-        <button class="button" @click="depositToken" v-show="ok && active">deposit</button>
-        <p>{{txStatus}}</p>
+        <div v-show="isFill">
+          <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+          <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+          <button class="button" @click="depositToken" v-show="ok && active">deposit</button>
+        </div>
+        <p v-cloak>{{txStatus}}</p>
       </div> 
     </div> 
   </div>
@@ -63,26 +66,36 @@
         balanceOfUser: '',
         noCheckSentence: '',
         okCheckSentence: '',
-        ok: '',
+        ok: false,
         active: false,
+        txData: {
+          value: 'initial'
+        },
         txStatus: ''
       },
       methods: {
         depositTokenCheck: async function() {
+          if (this.active === true) {
+            this.active = false;
+            return;
+          }
           this.ok = false;
           if (!this.value) {
             this.noCheckSentence = "Please input a value!";
-            this.active = !this.active;
+            this.txData.value = this.value;
+            this.active = true;
             return;
           }
           if (isNaN(this.value)) {
             this.noCheckSentence = "Please input a value as number!";
-            this.active = !this.active;
+            this.txData.value = this.value;
+            this.active = true;
             return;
           }
           if (!Number.isInteger(Number(this.value))) {
             this.noCheckSentence = "Please input a value as integer!";
-            this.active = !this.active;
+            this.txData.value = this.value;
+            this.active = true;
             return;
           }
           this.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
@@ -92,7 +105,8 @@
             this.okCheckSentence = "OK! You deposit " + this.value + " token!";
             this.ok = true;
           }
-          this.active = !this.active;
+          this.txData.value = this.value;
+          this.active = true;
         },
         depositToken: function() {
           this.txStatus = "Depositing token on the blockchain. This may take a while...";
@@ -106,6 +120,16 @@
               depositTokenVM.txStatus = "";
               alert('Transaction errored!');
             });
+        }
+      },
+      computed: {
+        isFill() {
+          if (this.value === this.txData.value) {
+            return true;
+          } else {
+            this.active = false;
+            return true;
+          }
         }
       }
     });

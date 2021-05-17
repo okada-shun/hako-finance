@@ -17,7 +17,7 @@
       <a href="../index.html">Hako Finance</a>
     </div>
     <p class="introduction">
-      Transfer, get, lend, borrow, and credit creation, all transactions are realized on Hako Finance! 
+      Transfer, get, lend, borrow, and credit creation, all transactions are realized on Hako Finance!<br> 
       Welcome to next-generation DeFi!
     </p>
   </header>
@@ -26,13 +26,16 @@
       <div class="transaction" id="creditCreationByMember">
         <h2>credit creation</h2>
         <p>Create your credit by owing debt to Hako.<br>
+          (The upper limit value you can create is {{upperLimit}}.)<br>
           (You can't create more credit than your net assets.)</p>
         how much? <input class="question" type="text" name="value" v-model="value"><br>
         <button class="button" @click="creditCreationByMemberCheck">check</button>
-        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
-        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
-        <button class="button" @click="creditCreationByMember" v-show="ok && active">credit creation</button>
-        <p>{{txStatus}}</p>
+        <div v-show="isFill">
+          <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+          <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+          <button class="button" @click="creditCreationByMember" v-show="ok && active">credit creation</button>
+        </div>
+        <p v-cloak>{{txStatus}}</p>
       </div>
     </div> 
   </div>
@@ -44,6 +47,7 @@
     async function startApp() {
       hako = new web3.eth.Contract(hakoABI, hakoAddress);
       userAccount = await web3.eth.getCoinbase();
+      creditCreationByMemberVM.upperLimit = await hako.methods.upperLimit().call();
     }
 
     window.addEventListener('load', function () {
@@ -70,26 +74,36 @@
         upperLimit: '',
         noCheckSentence: '',
         okCheckSentence: '',
-        ok: '',
+        ok: false,
         active: false,
+        txData: {
+          value: 'initial',
+        },
         txStatus: ''
       },
       methods: {
         creditCreationByMemberCheck: async function() {
+          if (this.active === true) {
+            this.active = false;
+            return;
+          }
           this.ok = false;
           if (!this.value) {
             this.noCheckSentence = "Please input a value!";
-            this.active = !this.active;
+            this.txData.value = this.value;
+            this.active = true;
             return;
           }
           if (isNaN(this.value)) {
             this.noCheckSentence = "Please input a value as number!";
-            this.active = !this.active;
+            this.txData.value = this.value;
+            this.active = true;
             return;
           }
           if (!Number.isInteger(Number(this.value))) {
             this.noCheckSentence = "Please input a value as integer!";
-            this.active = !this.active;
+            this.txData.value = this.value;
+            this.active = true;
             return;
           }
           this.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
@@ -99,7 +113,6 @@
           this.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
           this.netAssetsOfUser = Number(this.balanceOfUser) + Number(this.creditToHakoOfUser)
            - Number(this.debtToHakoOfUser) + Number(this.creditToMemberOfUser) - Number(this.debtToMemberOfUser);
-          this.upperLimit = await hako.methods.upperLimit().call();
           if (Number(this.value) > Number(this.upperLimit)) {
             this.noCheckSentence = 
             "NO! The upper limit is " + this.upperLimit + "! You can't create more than "
@@ -112,7 +125,8 @@
             "OK! You create " + this.value + " credit! At this time, you have " + this.value + " debt to Hako!";
             this.ok = true;
           }
-          this.active = !this.active;
+          this.txData.value = this.value;
+          this.active = true;
         },
         creditCreationByMember: function() {
           this.txStatus = "Creating credit on the blockchain. This may take a while...";
@@ -126,6 +140,16 @@
             creditCreationByMemberVM.txStatus = "";
             alert('Transaction errored!');
           });
+        }
+      },
+      computed: {
+        isFill() {
+          if (this.value === this.txData.value) {
+            return true;
+          } else {
+            this.active = false;
+            return true;
+          }
         }
       }
     });

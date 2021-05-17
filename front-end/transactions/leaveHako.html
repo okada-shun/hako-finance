@@ -17,7 +17,7 @@
       <a href="../index.html">Hako Finance</a>
     </div>
     <p class="introduction">
-      Transfer, get, lend, borrow, and credit creation, all transactions are realized on Hako Finance! 
+      Transfer, get, lend, borrow, and credit creation, all transactions are realized on Hako Finance!<br> 
       Welcome to next-generation DeFi!
     </p>
   </header>
@@ -25,12 +25,13 @@
     <div class="transactions">
       <div class="transaction" id="leaveHako">
         <h2>leave Hako</h2>
-        <p>Leave Hako. (All your credit returns to you.)</p>
+        <p>Leave Hako.<br>
+          (All your credit returns to you.)</p>
         <button class="button" @click="leaveHakoCheck">check</button>
         <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
         <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
         <button class="button" @click="leaveHako" v-show="ok && active">leave</button>
-        <p>{{txStatus}}</p>
+        <p v-cloak>{{txStatus}}</p>
       </div>
     </div> 
   </div>
@@ -61,17 +62,21 @@
         creditToHakoOfUser: '',
         noCheckSentence: '',
         okCheckSentence: '',
-        ok: '',
+        ok: false,
         active: false,
         txStatus: ''
       },
       methods: {
         leaveHakoCheck: async function() {
+          if (this.active === true) {
+            this.active = false;
+            return;
+          }
           this.ok = false;
           this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
           this.okCheckSentence = "OK! You leave Hako! " + this.creditToHakoOfUser + " credit returns to you!";
           this.ok = true;
-          this.active = !this.active;
+          this.active = true;
         },
         leaveHako: function() {
           this.txStatus = "Leaving Hako on the blockchain. This may take a while...";

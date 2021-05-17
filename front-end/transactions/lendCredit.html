@@ -17,7 +17,7 @@
       <a href="../index.html">Hako Finance</a>
     </div>
     <p class="introduction">
-      Transfer, get, lend, borrow, and credit creation, all transactions are realized on Hako Finance! 
+      Transfer, get, lend, borrow, and credit creation, all transactions are realized on Hako Finance!<br> 
       Welcome to next-generation DeFi!
     </p>
   </header>
@@ -26,7 +26,8 @@
       <div class="transaction" id="lendCredit">
         <h2>lend credit</h2>
         <p>Lend your credit to another member account.<br>
-          (You can't lend more credit than the borrower registered and you can't lend credit for more duration than the borrower registered.)</p>
+          (You can't lend more credit than the borrower registered and 
+          you can't lend credit for more duration than the borrower registered.)</p>
         to who? <input class="question" type="text" name="to" v-model="to"><br>
         how much? <input class="question" type="text" name="value" v-model="value"><br>
         how long? 
@@ -35,10 +36,12 @@
         <input class="question duration" type="text" name="duration" v-model="minutes">minutes
         <input class="question duration" type="text" name="duration" v-model="seconds">seconds<br>
         <button class="button" @click="lendCreditCheck">check</button>
-        <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
-        <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
-        <button class="button" @click="lendCredit" v-show="ok && active">lend</button>
-        <p>{{txStatus}}</p>
+        <div v-show="isFill">
+          <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
+          <p class="noCheckSentence" v-show="!ok && active" v-cloak>{{noCheckSentence}}</p>
+          <button class="button" @click="lendCredit" v-show="ok && active">lend</button>
+        </div>
+        <p v-cloak>{{txStatus}}</p>
       </div>
     </div> 
   </div>
@@ -83,39 +86,75 @@
         },
         noCheckSentence: '',
         okCheckSentence: '',
-        ok: '',
+        ok: false,
         active: false,
+        txData: {
+          to: 'initial',
+          value: 'initial',
+          days: 'initial',
+          hours: 'initial',
+          minutes: 'initial',
+          seconds: 'initial'
+        },
         txStatus: ''
       },
       methods: {
         lendCreditCheck: async function() {
+          if (this.active === true) {
+            this.active = false;
+            return;
+          }
           this.ok = false;
           if (!this.to || !this.value) {
             this.noCheckSentence = "Please input a value!";
-            this.active = !this.active;
+            this.txData.to = this.to;
+            this.txData.value = this.value;
+            this.active = true;
             return;
           }
           if (!this.days && !this.hours && !this.minutes && !this.seconds) {
             this.noCheckSentence = "Please input a value!";
-            this.active = !this.active;
+            this.txData.days = this.days;
+            this.txData.hours = this.hours;
+            this.txData.minutes = this.minutes;
+            this.txData.seconds = this.seconds;
+            this.active = true;
             return;
           }
           if (isNaN(this.value) || isNaN(this.days) || isNaN(this.hours) || isNaN(this.minutes) || isNaN(this.seconds)) {
             this.noCheckSentence = "Please input a value as number!";
-            this.active = !this.active;
+            this.txData.to = this.to;
+            this.txData.value = this.value;
+            this.txData.days = this.days;
+            this.txData.hours = this.hours;
+            this.txData.minutes = this.minutes;
+            this.txData.seconds = this.seconds;
+            this.active = true;
             return;
           }
           if (!Number.isInteger(Number(this.value)) || !Number.isInteger(Number(this.days)) || !Number.isInteger(Number(this.hours))
            || !Number.isInteger(Number(this.minutes)) || !Number.isInteger(Number(this.seconds))) {
             this.noCheckSentence = "Please input a value as integer!";
-            this.active = !this.active;
+            this.txData.to = this.to;
+            this.txData.value = this.value;
+            this.txData.days = this.days;
+            this.txData.hours = this.hours;
+            this.txData.minutes = this.minutes;
+            this.txData.seconds = this.seconds;
+            this.active = true;
             return;
           }
           try {
             this.memberOrNotOfTo = await hako.methods.memberCheckOf(this.to).call();
           } catch (error) {
             this.noCheckSentence = "Please input an address exactly!";
-            this.active = !this.active;
+            this.txData.to = this.to;
+            this.txData.value = this.value;
+            this.txData.days = this.days;
+            this.txData.hours = this.hours;
+            this.txData.minutes = this.minutes;
+            this.txData.seconds = this.seconds;
+            this.active = true;
             return;
           }
           this.duration = 
@@ -150,7 +189,13 @@
             "OK! You lend " + this.value + " credit to <" + this.to + "> for " + this.duration + " seconds!";
             this.ok = true;
           }
-          this.active = !this.active;
+          this.txData.to = this.to;
+          this.txData.value = this.value;
+          this.txData.days = this.days;
+          this.txData.hours = this.hours;
+          this.txData.minutes = this.minutes;
+          this.txData.seconds = this.seconds;
+          this.active = true;
         },
         lendCredit: function() {
           this.txStatus = "Lending credit on the blockchain. This may take a while...";
@@ -164,6 +209,18 @@
               lendCreditVM.txStatus = "";
               alert('Transaction errored!');
             });
+        }
+      },
+      computed: {
+        isFill() {
+          if (this.to === this.txData.to && this.value === this.txData.value
+           && this.days === this.txData.days && this.hours === this.txData.hours
+           && this.minutes === this.txData.minutes && this.seconds === this.txData.seconds) {
+            return true;
+          } else {
+            this.active = false;
+            return true;
+          }
         }
       }
     });
