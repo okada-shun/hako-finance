@@ -74,7 +74,10 @@
           <ul>
             <li class="memberCheck">value and duration you can borrow</li>
             <li class="infoData" v-cloak>value<br>{{userData.valueDuration.value}}</li>
-            <li class="infoData" v-cloak>duration<br>{{userData.valueDuration.duration}}</li>
+            <li class="infoAddress" v-cloak>duration<br>
+              {{userData.valueDuration.durationData.days}} days {{userData.valueDuration.durationData.hours}} hours 
+              {{userData.valueDuration.durationData.minutes}} minutes {{userData.valueDuration.durationData.seconds}} seconds 
+              ( = {{userData.valueDuration.duration}} seconds)</li>
           </ul>
         </div>
         <div class="info-content" v-show="isNotMember">
@@ -93,7 +96,7 @@
           <ul>
             <li class="memberCheck">value and duration you can borrow</li>
             <li class="infoData" v-cloak>value<br><span>{{userData.valueDuration.value}}</span></li>
-            <li class="infoData" v-cloak>duration<br><span>{{userData.valueDuration.duration}}</span></li>
+            <li class="infoAddress" v-cloak>duration<br><span>{{userData.valueDuration.duration}}</span></li>
           </ul>
         </div>
       </div>
@@ -473,7 +476,7 @@
                 <a href="history/transfer_log.html">transfer token</a>
               </li><br>
               <div class="enter">
-                <a href="history/transfer_log.html">watch history</a>
+                <a href="history/transfer_log.html">watch the history</a>
               </div>
             </div>
             <div class="transactionLink transferCredit">
@@ -481,7 +484,7 @@
                 <a href="history/transferCredit_log.html">transfer credit</a>
               </li><br>
               <div class="enter">
-                <a href="history/transferCredit_log.html">watch history</a>
+                <a href="history/transferCredit_log.html">watch the history</a>
               </div>
             </div>
             <div class="transactionLink joinHako">
@@ -489,7 +492,7 @@
                 <a href="history/joinHako_log.html">join Hako</a>
               </li><br>
               <div class="enter">
-                <a href="history/joinHako_log.html">watch history</a>
+                <a href="history/joinHako_log.html">watch the history</a>
               </div>
             </div>
             <div class="transactionLink leaveHako">
@@ -497,7 +500,7 @@
                 <a href="history/leaveHako_log.html">leave Hako</a>
               </li><br>
               <div class="enter">
-                <a href="history/leaveHako_log.html">watch history</a>
+                <a href="history/leaveHako_log.html">watch the history</a>
               </div>
             </div>
             <div class="transactionLink depositToken">
@@ -505,7 +508,7 @@
                 <a href="history/depositToken_log.html">deposit token</a>
               </li><br>
               <div class="enter">
-                <a href="history/depositToken_log.html">watch history</a>
+                <a href="history/depositToken_log.html">watch the history</a>
               </div>
             </div>
             <div class="transactionLink withdrawToken">
@@ -513,7 +516,7 @@
                 <a href="history/withdrawToken_log.html">withdraw token</a>
               </li><br>
               <div class="enter">
-                <a href="history/withdrawToken_log.html">watch history</a>
+                <a href="history/withdrawToken_log.html">watch the history</a>
               </div>
             </div>
             <div class="transactionLink registerBorrowValueDuration">
@@ -521,7 +524,7 @@
                 <a href="history/registerBorrowValueDuration_log.html">register borrowing</a>
               </li><br>
               <div class="enter">
-                <a href="history/registerBorrowValueDuration_log.html">watch history</a>
+                <a href="history/registerBorrowValueDuration_log.html">watch the history</a>
               </div>
             </div>
             <div class="transactionLink lendCredit">
@@ -529,7 +532,7 @@
                 <a href="history/lendCredit_log.html">lend credit</a>
               </li><br>
               <div class="enter">
-                <a href="history/lendCredit_log.html">watch history</a>
+                <a href="history/lendCredit_log.html">watch the history</a>
               </div>
             </div>
             <div class="transactionLink collectDebtFrom">
@@ -537,7 +540,7 @@
                 <a href="history/collectDebtFrom_log.html">collect debt</a>
               </li><br>
               <div class="enter">
-                <a href="history/collectDebtFrom_log.html">watch history</a>
+                <a href="history/collectDebtFrom_log.html">watch the history</a>
               </div>
             </div>
             <div class="transactionLink returnDebtTo">
@@ -545,7 +548,7 @@
                 <a href="history/returnDebtTo_log.html">return debt</a>
               </li><br>
               <div class="enter">
-                <a href="history/returnDebtTo_log.html">watch history</a>
+                <a href="history/returnDebtTo_log.html">watch the history</a>
               </div>
             </div>
             <div class="transactionLink creditCreationByMember">
@@ -553,7 +556,7 @@
                 <a href="history/creditCreationByMember_log.html">credit creation</a>
               </li><br>
               <div class="enter">
-                <a href="history/creditCreationByMember_log.html">watch history</a>
+                <a href="history/creditCreationByMember_log.html">watch the history</a>
               </div>
             </div>
             <div class="transactionLink arrangement">
@@ -561,7 +564,7 @@
                 <a href="history/arrangement_log.html">arrangement debt</a>
               </li><br>
               <div class="enter">
-                <a href="history/arrangement_log.html">watch history</a>
+                <a href="history/arrangement_log.html">watch the history</a>
               </div>
             </div>
           </ul>

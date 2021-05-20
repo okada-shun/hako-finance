@@ -81,7 +81,13 @@ var appVM = new Vue({
       borrowValueDurationOfUser: '-',
       valueDuration: {
         value: '-',
-        duration: '-'
+        duration: '-',
+        durationData: {
+          days: '-',
+          hours: '-',
+          minutes: '-',
+          seconds: '-'
+        }
       }
     }
   },
@@ -116,6 +122,7 @@ var appVM = new Vue({
         this.userData.netAssetsOfUser = netAssetsOfUser;
         this.userData.valueDuration.value = borrowValueDurationOfUser['0'];
         this.userData.valueDuration.duration = borrowValueDurationOfUser['1'];
+        this.arrangeDuration(Number(this.userData.valueDuration.duration));
       } else {
         this.userData.creditToHakoOfUser = "Member Only";
         this.userData.debtToHakoOfUser = "Member Only";
@@ -132,6 +139,18 @@ var appVM = new Vue({
       } else {
         this.userData.memberCheckOfUser = 'You are NOT a Hako Member!';
       }
+    },
+    arrangeDuration: function(duration) {
+      let remainderA = duration % 86400;
+      let quotientA = duration - remainderA;
+      this.userData.valueDuration.durationData.days = quotientA / 86400;
+      let remainderB = remainderA % 3600;
+      let quotientB = remainderA - remainderB;
+      this.userData.valueDuration.durationData.hours = quotientB / 3600;
+      let remainderC = remainderB % 60;
+      let quotientC = remainderB - remainderC;
+      this.userData.valueDuration.durationData.minutes = quotientC / 60;
+      this.userData.valueDuration.durationData.seconds = remainderC;
     }
   },
   computed: {
