@@ -32,7 +32,10 @@
           <div v-show="!loading">
             <div v-show="event.length > 0">
               <div class="log" v-for="log in logs" :key="log.id" v-show="active">
-                <p v-cloak>You registered borrow value as {{log.value}} credit and borrow duration as {{log.duration}} seconds at {{log.time}}.</p>
+                <p v-cloak>You registered borrow value as {{log.value}} credit
+                 and borrow duration as {{log.durationData.days}} days {{log.durationData.hours}} hours 
+                 {{log.durationData.minutes}} minutes {{log.durationData.seconds}} seconds
+                 ( = {{log.duration}} seconds) at {{log.time}}.</p>
               </div>
             </div>
             <div v-show="event.length === 0">
@@ -77,6 +80,12 @@
           0: {
             value: '',
             duration: '',
+            durationData: {
+              days: '',
+              hours: '',
+              minutes: '',
+              seconds: ''
+            },
             time: ''
           }
         }  
@@ -101,6 +110,7 @@
           for (let i = 0; i < this.event.length; i++) {
             this.logs[i].value = this.event[i].returnValues[1];
             this.logs[i].duration = this.event[i].returnValues[2];
+            this.arrangeDuration(Number(this.logs[i].duration), i);
             this.txHash = this.event[i].transactionHash;
             this.blockN = await web3.eth.getTransaction(this.txHash);
             this.blockData = await web3.eth.getBlock(this.blockN.blockNumber);
@@ -109,13 +119,31 @@
               this.logs[i + 1] = {
                 value: '',
                 duration: '',
+                durationData: {
+                  days: '',
+                  hours: '',
+                  minutes: '',
+                  seconds: ''
+                },
                 time: ''
               }
             }
           }
           this.active = true;
           this.loading = false;
-        }
+        },
+        arrangeDuration: function(duration, i) {
+          let remainderA = duration % 86400;
+          let quotientA = duration - remainderA;
+          this.logs[i].durationData.days = quotientA / 86400;
+          let remainderB = remainderA % 3600;
+          let quotientB = remainderA - remainderB;
+          this.logs[i].durationData.hours = quotientB / 3600;
+          let remainderC = remainderB % 60;
+          let quotientC = remainderB - remainderC;
+          this.logs[i].durationData.minutes = quotientC / 60;
+          this.logs[i].durationData.seconds = remainderC;
+        },
       }
     });
   </script>

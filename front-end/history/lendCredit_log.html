@@ -32,7 +32,10 @@
           <div v-show="!txDataA.loading">
             <div v-show="txDataA.event.length > 0">
               <div class="log" v-for="log in txDataA.logs" :key="log.id" v-show="txDataA.active">
-                <p v-cloak>You lent {{log.value}} credit to {{log.debtor}} for {{log.duration}} seconds at {{log.time}}.</p>
+                <p v-cloak>You lent {{log.value}} credit to {{log.debtor}}
+                 for {{log.durationData.days}} days {{log.durationData.hours}} hours 
+                 {{log.durationData.minutes}} minutes {{log.durationData.seconds}} seconds
+                 ( = {{log.duration}} seconds) at {{log.time}}.</p>
               </div>
             </div>
             <div v-show="txDataA.event.length === 0">
@@ -47,7 +50,10 @@
           <div v-show="!txDataB.loading">
             <div v-show="txDataB.event.length > 0">
               <div class="log" v-for="log in txDataB.logs" :key="log.id" v-show="txDataB.active">
-                <p v-cloak>{{log.creditor}} lent {{log.value}} credit to you for {{log.duration}} seconds at {{log.time}}.</p>
+                <p v-cloak>{{log.creditor}} lent {{log.value}} credit to you 
+                 for {{log.durationData.days}} days {{log.durationData.hours}} hours 
+                 {{log.durationData.minutes}} minutes {{log.durationData.seconds}} seconds
+                 ( = {{log.duration}} seconds) at {{log.time}}.</p>
               </div>
             </div>
             <div v-show="txDataB.event.length === 0">
@@ -94,6 +100,12 @@
               debtor: '',
               value: '',
               duration: '',
+              durationData: {
+                days: '',
+                hours: '',
+                minutes: '',
+                seconds: ''
+              },
               time: ''
             }
           }
@@ -110,6 +122,12 @@
               creditor: '',
               value: '',
               duration: '',
+              durationData: {
+                days: '',
+                hours: '',
+                minutes: '',
+                seconds: ''
+              },
               time: ''
             }
           }
@@ -136,6 +154,7 @@
             this.txDataA.logs[i].debtor = "<" + this.txDataA.event[i].returnValues[1] + ">";
             this.txDataA.logs[i].value = this.txDataA.event[i].returnValues[2];
             this.txDataA.logs[i].duration = this.txDataA.event[i].returnValues[3];
+            this.arrangeDurationA(Number(this.txDataA.logs[i].duration), i);
             this.txDataA.txHash = this.txDataA.event[i].transactionHash;
             this.txDataA.blockN = await web3.eth.getTransaction(this.txDataA.txHash);
             this.txDataA.blockData = await web3.eth.getBlock(this.txDataA.blockN.blockNumber);
@@ -145,12 +164,30 @@
                 debtor: '',
                 value: '',
                 duration: '',
+                durationData: {
+                  days: '',
+                  hours: '',
+                  minutes: '',
+                  seconds: ''
+                },
                 time: ''
               }
             }
           }
           this.txDataA.active = true;
           this.txDataA.loading = false;
+        },
+        arrangeDurationA: function(duration, i) {
+          let remainderA = duration % 86400;
+          let quotientA = duration - remainderA;
+          this.txDataA.logs[i].durationData.days = quotientA / 86400;
+          let remainderB = remainderA % 3600;
+          let quotientB = remainderA - remainderB;
+          this.txDataA.logs[i].durationData.hours = quotientB / 3600;
+          let remainderC = remainderB % 60;
+          let quotientC = remainderB - remainderC;
+          this.txDataA.logs[i].durationData.minutes = quotientC / 60;
+          this.txDataA.logs[i].durationData.seconds = remainderC;
         },
         watchToLog: async function() {
           if (this.txDataB.active === true) {
@@ -172,6 +209,7 @@
             this.txDataB.logs[i].creditor = "<" + this.txDataB.event[i].returnValues[0] + ">";
             this.txDataB.logs[i].value = this.txDataB.event[i].returnValues[2];
             this.txDataB.logs[i].duration = this.txDataB.event[i].returnValues[3];
+            this.arrangeDurationB(Number(this.txDataB.logs[i].duration), i);
             this.txDataB.txHash = this.txDataB.event[i].transactionHash;
             this.txDataB.blockN = await web3.eth.getTransaction(this.txDataB.txHash);
             this.txDataB.blockData = await web3.eth.getBlock(this.txDataB.blockN.blockNumber);
@@ -181,13 +219,31 @@
                 creditor: '',
                 value: '',
                 duration: '',
+                durationData: {
+                  days: '',
+                  hours: '',
+                  minutes: '',
+                  seconds: ''
+                },
                 time: ''
               }
             }
           }
           this.txDataB.active = true;
           this.txDataB.loading = false;
-        }
+        },
+        arrangeDurationB: function(duration, i) {
+          let remainderA = duration % 86400;
+          let quotientA = duration - remainderA;
+          this.txDataB.logs[i].durationData.days = quotientA / 86400;
+          let remainderB = remainderA % 3600;
+          let quotientB = remainderA - remainderB;
+          this.txDataB.logs[i].durationData.hours = quotientB / 3600;
+          let remainderC = remainderB % 60;
+          let quotientC = remainderB - remainderC;
+          this.txDataB.logs[i].durationData.minutes = quotientC / 60;
+          this.txDataB.logs[i].durationData.seconds = remainderC;
+        },
       }
     });
   </script>
