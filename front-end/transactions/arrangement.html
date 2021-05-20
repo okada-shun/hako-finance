@@ -25,7 +25,7 @@
     <div class="transactions">
       <div class="transaction" id="arrangement">
         <h2>arrangement debt</h2>
-        <p>Reduce your debt by reducing your credit.</p>
+        <p>Reduce your debt by reducing your credit</p>
         how much? <input class="question" type="text" name="value" v-model="value"><br>
         <button class="button" @click="arrangementCheck">check</button>
         <div v-show="isFill">
@@ -62,6 +62,7 @@
       el: '#arrangement',
       data: {
         value: '',
+        memberOrNotOfUser: '',
         creditToHakoOfUser: '',
         debtToHakoOfUser: '',
         noCheckSentence: '',
@@ -92,18 +93,30 @@
             this.active = true;
             return;
           }
+          if (Number(this.value) <= 0) {
+            this.noCheckSentence = "Please input a value as positive number!";
+            this.txData.value = this.value;
+            this.active = true;
+            return;
+          }
           if (!Number.isInteger(Number(this.value))) {
             this.noCheckSentence = "Please input a value as integer!";
             this.txData.value = this.value;
             this.active = true;
             return;
           }
+          this.memberOrNotOfUser = await hako.methods.memberCheckOf(userAccount).call();
           this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
           this.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
-          if (Number(this.value) > Number(this.creditToHakoOfUser)) {
-            this.noCheckSentence = "NO! You have only " + this.creditToHakoOfUser + " credit! " + this.value + " is over!";
+          if (this.memberOrNotOfUser === '0') {
+            this.noCheckSentence = 
+            "NO! You are not a member! Non-member account can't reduce credit!";
+          } else if (Number(this.value) > Number(this.creditToHakoOfUser)) {
+            this.noCheckSentence = 
+            "NO! You have only " + this.creditToHakoOfUser + " credit! " + this.value + " is over!";
           } else if (Number(this.value) > Number(this.debtToHakoOfUser)) {
-            this.noCheckSentence = "NO! You have only " + this.debtToHakoOfUser + " debt! " + this.value + " is over!";
+            this.noCheckSentence = 
+            "NO! You have only " + this.debtToHakoOfUser + " debt! " + this.value + " is over!";
           } else {
             this.okCheckSentence = "OK! You reduce " + this.value + " debt by reducing " + this.value + " credit!";
             this.ok = true;

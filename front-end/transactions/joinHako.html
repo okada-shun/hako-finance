@@ -25,7 +25,7 @@
     <div class="transactions">
       <div class="transaction" id="joinHako">
         <h2>join Hako</h2>
-        <p>Join Hako by depositing some token to Hako.<br>
+        <p>Join Hako by depositing some token to Hako<br>
           (You can join Hako with depositing 0 token!)</p>
         how much? <input class="question" type="text" name="value" v-model="value"><br>
         <button class="button" @click="joinHakoCheck">check</button>
@@ -62,9 +62,10 @@
     var joinHakoVM = new Vue({
       el: '#joinHako',
       data: {
+        value: '',
+        memberOrNotOfUser: '',
         hakoOwner: '',
         balanceOfUser: '',
-        value: '',
         noCheckSentence: '',
         okCheckSentence: '',
         ok: false,
@@ -93,18 +94,30 @@
             this.active = true;
             return;
           }
+          if (Number(this.value) < 0) {
+            this.noCheckSentence = "Please input a value as 0 or positive number!";
+            this.txData.value = this.value;
+            this.active = true;
+            return;
+          }
           if (!Number.isInteger(Number(this.value))) {
             this.noCheckSentence = "Please input a value as integer!";
             this.txData.value = this.value;
             this.active = true;
             return;
           }
+          this.memberOrNotOfUser = await hako.methods.memberCheckOf(userAccount).call();
           this.hakoOwner = await hako.methods.hakoOwner().call();
           this.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
-          if (userAccount.toUpperCase() === this.hakoOwner.toUpperCase()) {
-            this.noCheckSentence = "NO! You are hako owner! Hako owner can't join Hako!";
+          if (this.memberOrNotOfUser === '1') {
+            this.noCheckSentence = 
+            "NO! You are already a member! Member account can't join Hako!";
+          } else if (userAccount.toUpperCase() === this.hakoOwner.toUpperCase()) {
+            this.noCheckSentence = 
+            "NO! You are hako owner! Hako owner can't join Hako!";
           } else if (Number(this.value) > Number(this.balanceOfUser)) {
-            this.noCheckSentence = "NO! You have only " + this.balanceOfUser + " token! " + this.value + " is over!";
+            this.noCheckSentence = 
+            "NO! You have only " + this.balanceOfUser + " token! " + this.value + " is over!";
           } else {
             this.okCheckSentence = "OK! You join Hako with depositing " + this.value + " token!";
             this.ok = true;

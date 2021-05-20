@@ -25,7 +25,7 @@
     <div class="transactions">
       <div class="transaction" id="transferCredit">
         <h2>transfer credit</h2>
-        <p>Transfer your credit to another member account.<br>
+        <p>Transfer your credit to another member account<br>
           (You can't transfer your credit to the account that is non-member
            and can't transfer your credit to the account that has debt to Hako.)</p>
         to who? <input class="question" type="text" name="to" v-model="to"><br>
@@ -67,6 +67,7 @@
         value: '',
         to: '',
         memberOrNotOfTo: '',
+        memberOrNotOfUser: '',
         creditToHakoOfUser: '',
         debtToHakoOfTo: '',
         noCheckSentence: '',
@@ -100,6 +101,13 @@
             this.active = true;
             return;
           }
+          if (Number(this.value) <= 0) {
+            this.noCheckSentence = "Please input a value as positive number!";
+            this.txData.to = this.to;
+            this.txData.value = this.value;
+            this.active = true;
+            return;
+          }
           if (!Number.isInteger(Number(this.value))) {
             this.noCheckSentence = "Please input a value as integer!";
             this.txData.to = this.to;
@@ -116,9 +124,13 @@
             this.active = true;
             return;
           }
+          this.memberOrNotOfUser = await hako.methods.memberCheckOf(userAccount).call();
           this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
           this.debtToHakoOfTo = await hako.methods.debtToHakoOf(this.to).call();
-          if (this.memberOrNotOfTo !== '1') {
+          if (this.memberOrNotOfUser === '0') {
+            this.noCheckSentence = 
+            "NO! You are not a member! Non-member account can't transfer credit!";
+          } else if (this.memberOrNotOfTo === '0') {
             this.noCheckSentence = 
             "NO! <" + this.to + "> is not a member account! You can't transfer your credit to non-member account!";
           } else if (Number(this.value) > Number(this.creditToHakoOfUser)) {

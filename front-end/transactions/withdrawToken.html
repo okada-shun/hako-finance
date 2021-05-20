@@ -25,7 +25,7 @@
     <div class="transactions">
       <div class="transaction" ID="withdrawToken">
         <h2>withdraw token</h2>
-        <p>Withdraw your token from Hako.<br>
+        <p>Withdraw your token from Hako<br>
           (Translate your credit into token.)</p>
         how much? <input class="question" type="text" name="value" v-model="value"><br>
         <button class="button" @click="withdrawTokenCheck">check</button>
@@ -63,7 +63,10 @@
       el: '#withdrawToken',
       data: {
         value: '',
+        memberOrNotOfUser: '',
         creditToHakoOfUser: '',
+        debtToHakoOfUser: '',
+        debtToMemberOfUser: '',
         noCheckSentence: '',
         okCheckSentence: '',
         ok: false,
@@ -92,14 +95,32 @@
             this.active = true;
             return;
           }
+          if (Number(this.value) <= 0) {
+            this.noCheckSentence = "Please input a value as positive number!";
+            this.txData.value = this.value;
+            this.active = true;
+            return;
+          }
           if (!Number.isInteger(Number(this.value))) {
             this.noCheckSentence = "Please input a value as integer!";
             this.txData.value = this.value;
             this.active = true;
             return;
           }
+          this.memberOrNotOfUser = await hako.methods.memberCheckOf(userAccount).call();
           this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
-          if (Number(this.value) > Number(this.creditToHakoOfUser)) {
+          this.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
+          this.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
+          if (this.memberOrNotOfUser === '0') {
+            this.noCheckSentence = 
+            "NO! You are not a member! Non-member account can't withdraw token!";
+          } else if (this.debtToHakoOfUser !== '0') {
+            this.noCheckSentence = 
+            "NO! You have debt to Hako! You can't withdraw token unless you return all of your debt to Hako!";
+          } else if (this.debtToMemberOfUser !== '0') {
+            this.noCheckSentence = 
+            "NO! You are borrowing credit! You can't withdraw token unless you return all of your debt to creditor!";
+          } else if (Number(this.value) > Number(this.creditToHakoOfUser)) {
             this.noCheckSentence = 
             "NO! You have only " + this.creditToHakoOfUser + " credit! " + this.value + " is over!";
           } else {

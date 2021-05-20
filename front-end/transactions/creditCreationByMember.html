@@ -25,9 +25,9 @@
     <div class="transactions">
       <div class="transaction" id="creditCreationByMember">
         <h2>credit creation</h2>
-        <p>Create your credit by owing debt to Hako.<br>
+        <p>Create your credit by owing debt to Hako<br>
           (The upper limit value you can create is {{upperLimit}}.)<br>
-          (You can't create more credit than your net assets.)</p>
+          (You can't create more credit than {{netAssetsOfUser}}, your net assets.)</p>
         how much? <input class="question" type="text" name="value" v-model="value"><br>
         <button class="button" @click="creditCreationByMemberCheck">check</button>
         <div v-show="isFill">
@@ -48,6 +48,17 @@
       hako = new web3.eth.Contract(hakoABI, hakoAddress);
       userAccount = await web3.eth.getCoinbase();
       creditCreationByMemberVM.upperLimit = await hako.methods.upperLimit().call();
+      creditCreationByMemberVM.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
+      creditCreationByMemberVM.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
+      creditCreationByMemberVM.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
+      creditCreationByMemberVM.creditToMemberOfUser = await hako.methods.creditToMemberOf(userAccount).call();
+      creditCreationByMemberVM.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
+      creditCreationByMemberVM.netAssetsOfUser = 
+      Number(creditCreationByMemberVM.balanceOfUser) + 
+      Number(creditCreationByMemberVM.creditToHakoOfUser) - 
+      Number(creditCreationByMemberVM.debtToHakoOfUser) + 
+      Number(creditCreationByMemberVM.creditToMemberOfUser) - 
+      Number(creditCreationByMemberVM.debtToMemberOfUser);
     }
 
     window.addEventListener('load', function () {
@@ -65,13 +76,14 @@
       el: '#creditCreationByMember',
       data: {
         value: '',
+        memberOrNotOfUser: '',
         balanceOfUser: '',
         creditToHakoOfUser: '',
         debtToHakoOfUser: '',
         creditToMemberOfUser: '',
         debtToMemberOfUser: '',
-        netAssetsOfUser: '',
-        upperLimit: '',
+        netAssetsOfUser: '-',
+        upperLimit: '-',
         noCheckSentence: '',
         okCheckSentence: '',
         ok: false,
@@ -100,20 +112,29 @@
             this.active = true;
             return;
           }
+          if (Number(this.value) <= 0) {
+            this.noCheckSentence = "Please input a value as positive number!";
+            this.txData.value = this.value;
+            this.active = true;
+            return;
+          }
           if (!Number.isInteger(Number(this.value))) {
             this.noCheckSentence = "Please input a value as integer!";
             this.txData.value = this.value;
             this.active = true;
             return;
           }
-          this.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
-          this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
-          this.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
-          this.creditToMemberOfUser = await hako.methods.creditToMemberOf(userAccount).call();
-          this.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
-          this.netAssetsOfUser = Number(this.balanceOfUser) + Number(this.creditToHakoOfUser)
-           - Number(this.debtToHakoOfUser) + Number(this.creditToMemberOfUser) - Number(this.debtToMemberOfUser);
-          if (Number(this.value) > Number(this.upperLimit)) {
+          this.memberOrNotOfUser = await hako.methods.memberCheckOf(userAccount).call();
+          if (this.memberOrNotOfUser === '0') {
+            this.noCheckSentence = 
+            "NO! You are not a member! Non-member account can't create credit!";
+          } else if (this.debtToHakoOfUser !== '0') {
+            this.noCheckSentence = 
+            "NO! You have debt to Hako! You can't create credit unless you return all of your debt to Hako!";
+          } else if (this.netAssetsOfUser <= 0) {
+            this.noCheckSentence = 
+            "NO! Your net assets is 0 or minus! You can't create any credit!";
+          } else if (Number(this.value) > Number(this.upperLimit)) {
             this.noCheckSentence = 
             "NO! The upper limit is " + this.upperLimit + "! You can't create more than "
               + this.upperLimit + " credit!";
@@ -122,7 +143,7 @@
             "NO! Your net assets is only " + this.netAssetsOfUser + "! You can't create more than " + this.netAssetsOfUser + " credit!";
           } else {
             this.okCheckSentence = 
-            "OK! You create " + this.value + " credit! At this time, you have " + this.value + " debt to Hako!";
+            "OK! You create " + this.value + " credit! At the same time, you have " + this.value + " debt to Hako!";
             this.ok = true;
           }
           this.txData.value = this.value;

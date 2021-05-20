@@ -25,7 +25,7 @@
     <div class="transactions">
       <div class="transaction" id="depositToken">
         <h2>deposit token</h2>
-        <p>Deposit your token to Hako.<br>
+        <p>Deposit your token to Hako<br>
           (Translate your token into credit.)</p>
         how much? <input class="question" type="text" name="value" v-model="value"><br>
         <button class="button" @click="depositTokenCheck">check</button>
@@ -63,6 +63,7 @@
       el: '#depositToken',
       data: {
         value: '',
+        memberOrNotOfUser: '',
         balanceOfUser: '',
         noCheckSentence: '',
         okCheckSentence: '',
@@ -92,15 +93,26 @@
             this.active = true;
             return;
           }
+          if (Number(this.value) <= 0) {
+            this.noCheckSentence = "Please input a value as positive number!";
+            this.txData.value = this.value;
+            this.active = true;
+            return;
+          }
           if (!Number.isInteger(Number(this.value))) {
             this.noCheckSentence = "Please input a value as integer!";
             this.txData.value = this.value;
             this.active = true;
             return;
           }
+          this.memberOrNotOfUser = await hako.methods.memberCheckOf(userAccount).call();
           this.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
-          if (Number(this.value) > Number(this.balanceOfUser)) {
-            this.noCheckSentence = "NO! You have only " + this.balanceOfUser + " token! " + this.value + " is over!";
+          if (this.memberOrNotOfUser === '0') {
+            this.noCheckSentence = 
+            "NO! You are not a member! Non-member account can't deposit token!";
+          } else if (Number(this.value) > Number(this.balanceOfUser)) {
+            this.noCheckSentence = 
+            "NO! You have only " + this.balanceOfUser + " token! " + this.value + " is over!";
           } else {
             this.okCheckSentence = "OK! You deposit " + this.value + " token!";
             this.ok = true;

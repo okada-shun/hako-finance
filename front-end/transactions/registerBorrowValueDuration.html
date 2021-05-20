@@ -26,9 +26,9 @@
       <div class="transaction" id="registerBorrowValueDuration">
         <h2>register borrowing</h2>
         <p>Register the credit value that you want to borrow from other member accounts, and
-        register the duration that you want to borrow the credit for.<br>
+        register the duration that you want to borrow the credit for<br>
         (The upper limit value you can register is {{upperLimit}}.)<br>
-        (You can't register more value than your net assets.)</p>
+        (You can't register more value than {{netAssetsOfUser}}, your net assets.)</p>
         how much? <input class="question" type="text" name="value" v-model="value"><br>
         how long? 
         <input class="question duration" type="text" name="duration" v-model="days">days
@@ -54,6 +54,17 @@
       hako = new web3.eth.Contract(hakoABI, hakoAddress);
       userAccount = await web3.eth.getCoinbase();
       registerBorrowValueDurationVM.upperLimit = await hako.methods.upperLimit().call();
+      registerBorrowValueDurationVM.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
+      registerBorrowValueDurationVM.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
+      registerBorrowValueDurationVM.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
+      registerBorrowValueDurationVM.creditToMemberOfUser = await hako.methods.creditToMemberOf(userAccount).call();
+      registerBorrowValueDurationVM.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
+      registerBorrowValueDurationVM.netAssetsOfUser = 
+      Number(registerBorrowValueDurationVM.balanceOfUser) + 
+      Number(registerBorrowValueDurationVM.creditToHakoOfUser) - 
+      Number(registerBorrowValueDurationVM.debtToHakoOfUser) + 
+      Number(registerBorrowValueDurationVM.creditToMemberOfUser) - 
+      Number(registerBorrowValueDurationVM.debtToMemberOfUser);
     }
 
     window.addEventListener('load', function () {
@@ -76,13 +87,14 @@
         hours: '',
         minutes: '',
         seconds: '',
+        memberOrNotOfUser: '',
         balanceOfUser: '',
         creditToHakoOfUser: '',
         debtToHakoOfUser: '',
         creditToMemberOfUser: '',
         debtToMemberOfUser: '',
-        netAssetsOfUser: '',
-        upperLimit: '',
+        netAssetsOfUser: '-',
+        upperLimit: '-',
         noCheckSentence: '',
         okCheckSentence: '',
         ok: false,
@@ -93,6 +105,12 @@
           hours: 'initial',
           minutes: 'initial',
           seconds: 'initial'
+        },
+        durationData: {
+          days: '',
+          hours: '',
+          minutes: '',
+          seconds: ''
         },
         txStatus: ''
       },
@@ -106,11 +124,16 @@
           if (!this.value) {
             this.noCheckSentence = "Please input a value!";
             this.txData.value = this.value;
+            this.txData.days = this.days;
+            this.txData.hours = this.hours;
+            this.txData.minutes = this.minutes;
+            this.txData.seconds = this.seconds;
             this.active = true;
             return;
           }
           if (!this.days && !this.hours && !this.minutes && !this.seconds) {
             this.noCheckSentence = "Please input a value!";
+            this.txData.value = this.value;
             this.txData.days = this.days;
             this.txData.hours = this.hours;
             this.txData.minutes = this.minutes;
@@ -120,6 +143,26 @@
           }
           if (isNaN(this.value) || isNaN(this.days) || isNaN(this.hours) || isNaN(this.minutes) || isNaN(this.seconds)) {
             this.noCheckSentence = "Please input a value as number!";
+            this.txData.value = this.value;
+            this.txData.days = this.days;
+            this.txData.hours = this.hours;
+            this.txData.minutes = this.minutes;
+            this.txData.seconds = this.seconds;
+            this.active = true;
+            return;
+          }
+          if (Number(this.value) <= 0 || Number(this.days) < 0 || Number(this.hours) < 0 || Number(this.minutes) < 0 || Number(this.seconds) < 0) {
+            this.noCheckSentence = "Please input a value as positive number!";
+            this.txData.value = this.value;
+            this.txData.days = this.days;
+            this.txData.hours = this.hours;
+            this.txData.minutes = this.minutes;
+            this.txData.seconds = this.seconds;
+            this.active = true;
+            return;
+          }
+          if (Number(this.days) === 0 && Number(this.hours) === 0 && Number(this.minutes) === 0 && Number(this.seconds) === 0) {
+            this.noCheckSentence = "Please input a duration as positive number!";
             this.txData.value = this.value;
             this.txData.days = this.days;
             this.txData.hours = this.hours;
@@ -140,16 +183,19 @@
             return;
           }
           this.duration = 
-          Number(this.days) * 24 * 60 * 60 + Number(this.hours) * 60 * 60
+          Number(this.days) * 86400 + Number(this.hours) * 3600
            + Number(this.minutes) * 60 + Number(this.seconds);
-          this.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
-          this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
-          this.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
-          this.creditToMemberOfUser = await hako.methods.creditToMemberOf(userAccount).call();
-          this.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
-          this.netAssetsOfUser = Number(this.balanceOfUser) + Number(this.creditToHakoOfUser)
-           - Number(this.debtToHakoOfUser) + Number(this.creditToMemberOfUser) - Number(this.debtToMemberOfUser);
-          if (Number(this.value) > Number(this.upperLimit)) {
+          this.memberOrNotOfUser = await hako.methods.memberCheckOf(userAccount).call();
+          if (this.memberOrNotOfUser === '0') {
+            this.noCheckSentence = 
+            "NO! You are not a member! Non-member account can't register!";
+          } else if (this.debtToMemberOfUser !== '0') {
+            this.noCheckSentence = 
+            "NO! You are borrowing credit! You can't register unless you return all of your debt to creditor!";
+          } else if (this.netAssetsOfUser <= 0) {
+            this.noCheckSentence = 
+            "NO! Your net assets is 0 or minus! You can't register any borrow value!";
+          } else if (Number(this.value) > Number(this.upperLimit)) {
             this.noCheckSentence = 
             "NO! The upper limit is " + this.upperLimit + "! You can't register more than "
               + this.upperLimit + " credit!";
@@ -158,9 +204,11 @@
             "NO! Your net assets is only " + this.netAssetsOfUser + "! You can't register more than "
               + this.netAssetsOfUser + " credit!";
           } else {
+            this.arrangeDuration(this.duration);
             this.okCheckSentence = 
             "OK! You register that you want to borrow " + this.value + " credit for "
-              + this.duration + " seconds!";
+              + this.durationData.days + " days " + this.durationData.hours + " hours "
+              + this.durationData.minutes + " minutes " + this.durationData.seconds + " seconds ( = " + this.duration + " seconds)!";
             this.ok = true;
           }
           this.txData.value = this.value;
@@ -169,6 +217,18 @@
           this.txData.minutes = this.minutes;
           this.txData.seconds = this.seconds;
           this.active = true;
+        },
+        arrangeDuration: function(duration) {
+          let remainderA = duration % 86400;
+          let quotientA = duration - remainderA;
+          this.durationData.days = quotientA / 86400;
+          let remainderB = remainderA % 3600;
+          let quotientB = remainderA - remainderB;
+          this.durationData.hours = quotientB / 3600;
+          let remainderC = remainderB % 60;
+          let quotientC = remainderB - remainderC;
+          this.durationData.minutes = quotientC / 60;
+          this.durationData.seconds = remainderC;
         },
         registerBorrowValueDuration: function() {
           this.txStatus = "Registering borrow value and duration on the blockchain. This may take a while...";

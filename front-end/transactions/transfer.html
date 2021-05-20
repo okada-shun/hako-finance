@@ -25,7 +25,7 @@
     <div class="transactions">
       <div class="transaction" id="transfer">
         <h2>transfer token</h2>
-        <p>Transfer your token to another account.</p>
+        <p>Transfer your token to another account</p>
         to who? <input class="question" type="text" name="to" v-model="to"><br>
         how much? <input class="question" type="text" name="value" v-model="value"><br>
         <button class="button" @click="transferCheck">check</button>
@@ -96,6 +96,13 @@
             this.active = true;
             return;
           }
+          if (Number(this.value) <= 0) {
+            this.noCheckSentence = "Please input a value as positive number!";
+            this.txData.to = this.to;
+            this.txData.value = this.value;
+            this.active = true;
+            return;
+          }
           if (!Number.isInteger(Number(this.value))) {
             this.noCheckSentence = "Please input a value as integer!";
             this.txData.to = this.to;
@@ -114,8 +121,8 @@
           }
           this.balanceOfUser = await hako.methods.balanceOf(userAccount).call();
           if (Number(this.value) > Number(this.balanceOfUser)) {
-            this.noCheckSentence = "NO! You have only " + this.balanceOfUser + " token! "
-              + this.value + " is over!";
+            this.noCheckSentence = 
+            "NO! You have only " + this.balanceOfUser + " token! " + this.value + " is over!";
           } else {
             this.okCheckSentence = "OK! You transfer " + this.value
               + " token to <" + this.to + ">!";

@@ -25,7 +25,7 @@
     <div class="transactions">
       <div class="transaction" id="returnDebtTo">
         <h2>return debt</h2>
-        <p>Return your debt to the creditor account.<br>
+        <p>Return your debt to the creditor account<br>
           (You can return your debt even if the borrow duration is yet to be passsed.)</p>
         <button class="button" @click="getDebtToMemberInfo">search</button><br>
         <p v-show="loading">Now searching your borrowing records...</p>
@@ -84,6 +84,12 @@
             creditor: '',
             value: '',
             duration: '',
+            durationData: {
+              days: '',
+              hours: '',
+              minutes: '',
+              seconds: ''
+            },
             time: '',
             deadline: '',
             over: ''
@@ -92,6 +98,9 @@
         lendRecordActive: false,
         creditor: '',
         id: '',
+        lendRecords: '',
+        memberOrNotOfUser: '',
+        debtToMemberOfUser: '',
         creditToHakoOfUser: '',
         noCheckSentence: '',
         okCheckSentence: '',
@@ -122,12 +131,28 @@
               this.idList.push(id);
             }
           }
+          if (this.idList.length === 0) {
+            this.lendRecordsOfUser[0].id = "ID: You're not borrowing credit!";
+            this.lendRecordsOfUser[0].creditor = "Creditor: You're not borrowing credit!";
+            this.lendRecordsOfUser[0].value = "Value: You're not borrowing credit!";
+            this.lendRecordsOfUser[0].duration = "Duration: You're not borrowing credit!";
+            this.lendRecordsOfUser[0].time = "Time: You're not borrowing credit!";
+            this.lendRecordsOfUser[0].deadline = "Deadline: You're not borrowing credit!";
+            this.lendRecordsOfUser[0].over = "You're not borrowing credit!";
+            this.lendRecordActive = true;
+            this.loading = false;
+            return;
+          }
           for (let j = 0; j < this.idList.length; j++) {
             let lendRecord = await hako.methods.getLendRecords(this.idList[j]).call();
             this.lendRecordsOfUser[j].id = "ID: " + lendRecord[0];
             this.lendRecordsOfUser[j].creditor = "Creditor: " + lendRecord[1];
             this.lendRecordsOfUser[j].value = "Value: " + lendRecord[3];
-            this.lendRecordsOfUser[j].duration = "Duration: " + lendRecord[4] + " seconds";
+            this.arrangeDuration(Number(lendRecord[4]), j);
+            this.lendRecordsOfUser[j].duration = "Duration: " + 
+            this.lendRecordsOfUser[j].durationData.days + " days " + this.lendRecordsOfUser[j].durationData.hours + " hours " + 
+            this.lendRecordsOfUser[j].durationData.minutes + " minutes " + this.lendRecordsOfUser[j].durationData.seconds + " seconds " + 
+            "( = " + lendRecord[4] + " seconds)";
             this.lendRecordsOfUser[j].time = "Time: " + String(new Date(Number(lendRecord[5]) * 1000));
             this.lendRecordsOfUser[j].deadline = 
             "Deadline: " + String(new Date(Number(lendRecord[5]) * 1000 + Number(lendRecord[4]) * 1000));
@@ -144,6 +169,12 @@
                 creditor: '',
                 value: '',
                 duration: '',
+                durationData: {
+                  days: '',
+                  hours: '',
+                  minutes: '',
+                  seconds: ''
+                },
                 time: '',
                 deadline: '',
                 over: ''
@@ -154,6 +185,18 @@
           this.lendRecordActive = true;
           this.loading = false;
         },
+        arrangeDuration: function(duration, i) {
+          let remainderA = duration % 86400;
+          let quotientA = duration - remainderA;
+          this.lendRecordsOfUser[i].durationData.days = quotientA / 86400;
+          let remainderB = remainderA % 3600;
+          let quotientB = remainderA - remainderB;
+          this.lendRecordsOfUser[i].durationData.hours = quotientB / 3600;
+          let remainderC = remainderB % 60;
+          let quotientC = remainderB - remainderC;
+          this.lendRecordsOfUser[i].durationData.minutes = quotientC / 60;
+          this.lendRecordsOfUser[i].durationData.seconds = remainderC;
+        },
         returnDebtToCheck: async function() {
           if (this.active === true) {
             this.active = false;
@@ -162,6 +205,27 @@
           this.ok = false;
           if (!this.creditor || !this.id) {
             this.noCheckSentence = "Please input a value!";
+            this.txData.creditor = this.creditor;
+            this.txData.id = this.id;
+            this.active = true;
+            return;
+          }
+          if (isNaN(this.id)) {
+            this.noCheckSentence = "Please input an id as number!";
+            this.txData.creditor = this.creditor;
+            this.txData.id = this.id;
+            this.active = true;
+            return;
+          }
+          if (Number(this.id) <= 0) {
+            this.noCheckSentence = "Please input an id as positive number!";
+            this.txData.creditor = this.creditor;
+            this.txData.id = this.id;
+            this.active = true;
+            return;
+          }
+          if (!Number.isInteger(Number(this.id))) {
+            this.noCheckSentence = "Please input an id as integer!";
             this.txData.creditor = this.creditor;
             this.txData.id = this.id;
             this.active = true;
@@ -185,15 +249,27 @@
             this.active = true;
             return;
           }
+          this.memberOrNotOfUser = await hako.methods.memberCheckOf(userAccount).call();
+          this.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
           this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
-          if (Number(this.lendRecords['3']) > Number(this.creditToHakoOfUser)) {
-            this.noCheckSentence = "NO! You have only " + this.creditToHakoOfUser + " credit! " + this.lendRecords['3'] + " is over!";
+          if (this.memberOrNotOfUser === '0') {
+            this.noCheckSentence = 
+            "NO! You are not a member! Non-member account can't return debt!";
+          } else if (this.debtToMemberOfUser === '0') {
+            this.noCheckSentence = 
+            "NO! You are not borrowing! You can't return debt!";
+          } else if (Number(this.lendRecords['3']) > Number(this.creditToHakoOfUser)) {
+            this.noCheckSentence = 
+            "NO! You have only " + this.creditToHakoOfUser + " credit! " + this.lendRecords['3'] + " is over!";
           } else if (this.lendRecords['2'].toUpperCase() !== userAccount.toUpperCase()) {
-            this.noCheckSentence = "NO! You are not the debtor of this lending!";
+            this.noCheckSentence = 
+            "NO! You are not the debtor of this lending!";
           } else if (this.lendRecords['1'].toUpperCase() !== this.creditor.toUpperCase()) {
-            this.checkSenoCheckSentencentence = "NO! <" + this.creditor + "> is not the creditor of this lending!";
+            this.checkSenoCheckSentencentence = 
+            "NO! <" + this.creditor + "> is not the creditor of this lending!";
           } else if (this.lendRecords['6'] !== "1") {
-            this.noCheckSentence = "NO! Lending ID: " + this.id + " is wrong or this lending had already finished!";
+            this.noCheckSentence = 
+            "NO! Lending ID: " + this.id + " is wrong or this lending had already finished!";
           } else {
             this.okCheckSentence = "OK! You return " + this.lendRecords['3'] + " debt to <" + this.creditor + ">!";
             this.ok = true;

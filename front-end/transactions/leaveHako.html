@@ -25,7 +25,7 @@
     <div class="transactions">
       <div class="transaction" id="leaveHako">
         <h2>leave Hako</h2>
-        <p>Leave Hako.<br>
+        <p>Leave Hako<br>
           (All your credit returns to you.)</p>
         <button class="button" @click="leaveHakoCheck">check</button>
         <p class="okCheckSentence" v-show="ok && active" v-cloak>{{okCheckSentence}}</p>
@@ -59,7 +59,11 @@
     var leaveHakoVM = new Vue({
       el: '#leaveHako',
       data: {
+        memberOrNotOfUser: '',
         creditToHakoOfUser: '',
+        debtToHakoOfUser: '',
+        creditToMemberOfUser: '',
+        debtToMemberOfUser: '',
         noCheckSentence: '',
         okCheckSentence: '',
         ok: false,
@@ -73,9 +77,27 @@
             return;
           }
           this.ok = false;
+          this.memberOrNotOfUser = await hako.methods.memberCheckOf(userAccount).call();
           this.creditToHakoOfUser = await hako.methods.creditToHakoOf(userAccount).call();
-          this.okCheckSentence = "OK! You leave Hako! " + this.creditToHakoOfUser + " credit returns to you!";
-          this.ok = true;
+          this.debtToHakoOfUser = await hako.methods.debtToHakoOf(userAccount).call();
+          this.creditToMemberOfUser = await hako.methods.creditToMemberOf(userAccount).call();
+          this.debtToMemberOfUser = await hako.methods.debtToMemberOf(userAccount).call();
+          if (this.memberOrNotOfUser === '0') {
+            this.noCheckSentence = 
+            "NO! You are not a member! Non-member account can't leave Hako!";
+          } else if (this.debtToHakoOfUser !== '0') {
+            this.noCheckSentence = 
+            "NO! You have debt to Hako! You can't leave Hako unless you return all of your debt to Hako!";
+          } else if (this.debtToMemberOfUser !== '0') {
+            this.noCheckSentence = 
+            "NO! You are borrowing credit! You can't leave Hako unless you return all of your debt to creditor!";
+          } else if (this.creditToMemberOfUser !== '0') {
+            this.noCheckSentence = 
+            "NO! You are lending credit! You can't leave Hako unless you collect all of your credit from debtor!";
+          } else {
+            this.okCheckSentence = "OK! You leave Hako! " + this.creditToHakoOfUser + " credit returns to you!";
+            this.ok = true;
+          }
           this.active = true;
         },
         leaveHako: function() {
