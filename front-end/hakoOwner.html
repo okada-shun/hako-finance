@@ -86,7 +86,7 @@
         <h1>Transactions</h1>
         <div class="transaction changeHakoOwner">
           <h2>change hako owner</h2>
-          <p>Change hako owner to new owner.<br>
+          <p>Change hako owner to new owner<br>
           (Hako member can't be new hako owner.)</p>
           to who? <input class="question" type="text" name="to" v-model="txDataA.to"><br>
           <button class="button" @click="changeHakoOwnerCheck">check</button>
@@ -116,7 +116,7 @@
           <h2>owner history</h2>
           <div class="history">
             <p>You can watch hako owner transition.</p>     
-            <button class="button" @click="watchOwnerLog">check</button><br>
+            <button class="button" @click="watchOwnerLog">watch</button><br>
             <p v-show="txDataC.loading">Now searching history...</p>
             <div v-show="!txDataC.loading">
               <div v-show="txDataC.event.length > 0">
@@ -134,12 +134,12 @@
           <h2>upper limit history</h2>
           <div class="history">
             <p>You can watch upper limit transition.</p>
-            <button class="button" @click="watchUpperLog">check</button><br>
+            <button class="button" @click="watchUpperLog">watch</button><br>
             <p v-show="txDataD.loading">Now searching history...</p>
             <div v-show="!txDataD.loading">
               <div v-show="txDataD.event.length > 0">
                 <div class="log" v-for="log in txDataD.logs" :key="log.id" v-show="txDataD.active">
-                  <p v-cloak>Owner {{log.owner}} changed upper limit to {{log.upperLimit}}.</p>
+                  <p v-cloak>Hako owner, {{log.owner}}, changed upper limit to {{log.upperLimit}} at {{log.time}}.</p>
                 </div>
               </div>
               <div v-show="txDataD.event.length === 0">
@@ -296,7 +296,10 @@
             this.txDataA.active = true;
             return;
           }
-          if (this.txDataA.memberOrNotOfTo === '1') {
+          if (this.txDataA.to.toUpperCase() === userAccount.toUpperCase()) {
+            this.txDataA.noCheckSentence = 
+            "NO! <" + this.txDataA.to + "> is you!";
+          } else if (this.txDataA.memberOrNotOfTo === '1') {
             this.txDataA.noCheckSentence = 
             "NO! <" + this.txDataA.to + "> is a member! Member account can't be hako owner!";
           } else {
@@ -334,6 +337,12 @@
           }
           if (isNaN(this.txDataB.value)) {
             this.txDataB.noCheckSentence = "Please input a value as number!";
+            this.txDataB.txData.value = this.txDataB.value;
+            this.txDataB.active = true;
+            return;
+          }
+          if (Number(this.txDataB.value) <= 0) {
+            this.txDataB.noCheckSentence = "Please input a value as positive number!";
             this.txDataB.txData.value = this.txDataB.value;
             this.txDataB.active = true;
             return;
