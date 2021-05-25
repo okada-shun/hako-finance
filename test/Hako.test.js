@@ -5,7 +5,7 @@ const Hako = artifacts.require('./Hako.sol');
 contract('Hako', ([alice, bob, carol, dave, ...accounts]) => {
 
   beforeEach(async function () {
-    this.hako = await Hako.new(1000, 500, 'HakoExample', 'HKEX', {from: alice});
+    this.hako = await Hako.new(1000, 500, 'HakoExample', 'HKEX', 0, {from: alice});
   });
 
   it('should have correct name, symbol, decimals, hakoOwner, hakoAddress, tokenSupply and upperLimit', async function () {
@@ -21,7 +21,7 @@ contract('Hako', ([alice, bob, carol, dave, ...accounts]) => {
     
     assert.equal(name.valueOf(), 'HakoExample');
     assert.equal(symbol.valueOf(), 'HKEX');
-    assert.equal(decimals.valueOf(), '2');
+    assert.equal(decimals.valueOf(), '0');
     assert.equal(hakoOwner, alice);
     assert.equal(hakoAddress, hakoAddress);
     assert.equal(totalSupply, 1000);

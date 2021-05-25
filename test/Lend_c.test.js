@@ -14,7 +14,7 @@ const time = require("./helpers/time");
 contract('Lend_c', ([alice, bob, carol, dave, ...accounts]) => {
   
   beforeEach(async function () {
-    this.hako = await Hako.new(1000, 500, 'HakoExample', 'HKEX', {from: alice});
+    this.hako = await Hako.new(1000, 500, 'HakoExample', 'HKEX', 0, {from: alice});
   });
 
   describe('getLendRecords', () => {
@@ -38,6 +38,30 @@ contract('Lend_c', ([alice, bob, carol, dave, ...accounts]) => {
       assert.equal(lendRecords[4], 60);
       lendRecords[5].should.be.bignumber.equal(event.args.time);
       assert.equal(lendRecords[6], 1);
+    });
+    
+  });
+
+  describe('lendCount', () => {
+
+    it('should get lending count', async function () {
+      await this.hako.transfer(bob, 300, {from: alice});
+      await this.hako.transfer(carol, 200, {from: alice});
+      await this.hako.transfer(dave, 100, {from: alice});
+      await this.hako.joinHako(300, {from: bob});
+      await this.hako.joinHako(200, {from: carol});
+      await this.hako.joinHako(100, {from: dave});
+      await this.hako.registerBorrowValueDuration(300, 60, {from: bob});
+      await this.hako.registerBorrowValueDuration(200, 60, {from: carol});
+      await this.hako.registerBorrowValueDuration(100, 60, {from: dave});
+      await this.hako.lendCredit(carol, 100, 60, {from: bob});
+      await this.hako.lendCredit(dave, 50, 60, {from: bob});
+      await this.hako.lendCredit(dave, 50, 60, {from: carol});
+      await this.hako.lendCredit(bob, 100, 60, {from: carol});
+      await this.hako.lendCredit(bob, 50, 60, {from: dave});
+      await this.hako.lendCredit(carol, 50, 60, {from: dave});
+      const lendCount = await this.hako.lendCount();
+      assert.equal(lendCount, 6);
     });
     
   });

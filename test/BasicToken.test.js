@@ -14,7 +14,7 @@ const utils = require("./helpers/utils");
 contract('BasicToken', ([alice, bob, carol, dave, ...accounts]) => {
 
   beforeEach(async function () {
-    this.hako = await Hako.new(1000, 500, 'HakoExample', 'HKEX', {from: alice});
+    this.hako = await Hako.new(1000, 500, 'HakoExample', 'HKEX', 0, {from: alice});
   });
 
   it('should exist', function () {
