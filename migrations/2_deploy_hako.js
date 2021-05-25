@@ -5,5 +5,6 @@ module.exports = function(deployer) {
   const initialUpperLimit = 500;
   const hakoName = "HakoPrototype";
   const hakoSymbol = "HKPT";
-  deployer.deploy(Hako, initialSupply, initialUpperLimit, hakoName, hakoSymbol);
+  const decimals = 0;
+  deployer.deploy(Hako, initialSupply, initialUpperLimit, hakoName, hakoSymbol, decimals);
 }
