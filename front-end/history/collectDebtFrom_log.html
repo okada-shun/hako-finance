@@ -33,8 +33,13 @@
           <div v-show="!txDataA.loading">
             <div v-show="txDataA.event.length > 0">
               <div class="log" v-for="log in txDataA.logs" :key="log.id" v-show="txDataA.active">
-                <p v-cloak>{{log.id}}<br>
-                  {{log.creditor}} collected {{log.value}} credit from you at {{log.time}}.</p>
+                <ul>
+                  <li>{{log.id}}<br>
+                    {{log.creditor}} collected {{log.value}} credit from you.</li>
+                  <li>Transaction Hash: {{log.txHash}}</li>
+                  <li>Block: {{log.blockN.blockNumber}}</li>
+                  <li>Timestamp: {{log.time}}</li>
+                </ul>
               </div>
             </div>
             <div v-show="txDataA.event.length === 0">
@@ -50,8 +55,13 @@
           <div v-show="!txDataB.loading">
             <div v-show="txDataB.event.length > 0">
               <div class="log" v-for="log in txDataB.logs" :key="log.id" v-show="txDataB.active">
-                <p v-cloak>{{log.id}}<br>
-                  You collected {{log.value}} credit from {{log.debtor}} at {{log.time}}.</p>
+                <ul>
+                  <li>{{log.id}}<br>
+                    You collected {{log.value}} credit from {{log.debtor}}.</li>
+                  <li>Transaction Hash: {{log.txHash}}</li>
+                  <li>Block: {{log.blockN.blockNumber}}</li>
+                  <li>Timestamp: {{log.time}}</li>
+                </ul>
               </div>
             </div>
             <div v-show="txDataB.event.length === 0">
@@ -90,14 +100,14 @@
           event: '',
           loading: false,
           active: false,
-          txHash: '',
-          blockN: '',
-          blockData: '',
           logs: {
             0: {
               creditor: '',
               id: '',
               value: '',
+              txHash: '',
+              blockN: '',
+              blockData: '',
               time: ''
             }
           }
@@ -106,14 +116,14 @@
           event: '',
           loading: false,
           active: false,
-          txHash: '',
-          blockN: '',
-          blockData: '',
           logs: {
             0: {
               debtor: '',
               id: '',
               value: '',
+              txHash: '',
+              blockN: '',
+              blockData: '',
               time: ''
             }
           }
@@ -142,15 +152,18 @@
             this.txDataA.logs[i].creditor = "<" + this.txDataA.event[i].returnValues[0] + ">";
             this.txDataA.logs[i].id = "ID: " + id;
             this.txDataA.logs[i].value = lendRecord[3];
-            this.txDataA.txHash = this.txDataA.event[i].transactionHash;
-            this.txDataA.blockN = await web3.eth.getTransaction(this.txDataA.txHash);
-            this.txDataA.blockData = await web3.eth.getBlock(this.txDataA.blockN.blockNumber);
-            this.txDataA.logs[i].time = String(new Date(this.txDataA.blockData.timestamp * 1000));
+            this.txDataA.logs[i].txHash = this.txDataA.event[i].transactionHash;
+            this.txDataA.logs[i].blockN = await web3.eth.getTransaction(this.txDataA.logs[i].txHash);
+            this.txDataA.logs[i].blockData = await web3.eth.getBlock(this.txDataA.logs[i].blockN.blockNumber);
+            this.txDataA.logs[i].time = String(new Date(this.txDataA.logs[i].blockData.timestamp * 1000));
             if (i + 1 != this.txDataA.event.length) {
               this.txDataA.logs[i + 1] = {
                 creditor: '',
                 id: '',
                 value: '',
+                txHash: '',
+                blockN: '',
+                blockData: '',
                 time: ''
               }
             }
@@ -180,15 +193,18 @@
             this.txDataB.logs[i].debtor = "<" + this.txDataB.event[i].returnValues[1] + ">";
             this.txDataB.logs[i].id = "ID: " + id;
             this.txDataB.logs[i].value = lendRecord[3];
-            this.txDataB.txHash = this.txDataB.event[i].transactionHash;
-            this.txDataB.blockN = await web3.eth.getTransaction(this.txDataB.txHash);
-            this.txDataB.blockData = await web3.eth.getBlock(this.txDataB.blockN.blockNumber);
-            this.txDataB.logs[i].time = String(new Date(this.txDataB.blockData.timestamp * 1000));
+            this.txDataB.logs[i].txHash = this.txDataB.event[i].transactionHash;
+            this.txDataB.logs[i].blockN = await web3.eth.getTransaction(this.txDataB.logs[i].txHash);
+            this.txDataB.logs[i].blockData = await web3.eth.getBlock(this.txDataB.logs[i].blockN.blockNumber);
+            this.txDataB.logs[i].time = String(new Date(this.txDataB.logs[i].blockData.timestamp * 1000));
             if (i + 1 != this.txDataB.event.length) {
               this.txDataB.logs[i + 1] = {
                 debtor: '',
                 id: '',
                 value: '',
+                txHash: '',
+                blockN: '',
+                blockData: '',
                 time: ''
               }
             }

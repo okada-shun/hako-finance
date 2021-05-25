@@ -32,7 +32,12 @@
           <div v-show="!txDataA.loading">
             <div v-show="txDataA.event.length > 0">
               <div class="log" v-for="log in txDataA.logs" :key="log.id" v-show="txDataA.active">
-                <p v-cloak>You transferred {{log.value}} token to {{log.to}} at {{log.time}}.</p>
+                <ul>
+                  <li>You transferred {{log.value}} token to {{log.to}}.</li>
+                  <li>Transaction Hash: {{log.txHash}}</li>
+                  <li>Block: {{log.blockN.blockNumber}}</li>
+                  <li>Timestamp: {{log.time}}</li>
+                </ul>
               </div>
             </div>
             <div v-show="txDataA.event.length === 0">
@@ -47,7 +52,12 @@
           <div v-show="!txDataB.loading">
             <div v-show="txDataB.event.length > 0">
               <div class="log" v-for="log in txDataB.logs" :key="log.id" v-show="txDataB.active">
-                <p v-cloak>{{log.from}} transferred {{log.value}} token to you at {{log.time}}.</p>
+                <ul>
+                  <li>{{log.from}} transferred {{log.value}} token to you.</li>
+                  <li>Transaction Hash: {{log.txHash}}</li>
+                  <li>Block: {{log.blockN.blockNumber}}</li>
+                  <li>Timestamp: {{log.time}}</li>
+                </ul>
               </div>
             </div>
             <div v-show="txDataB.event.length === 0">
@@ -86,13 +96,13 @@
           event: '',
           loading: false,
           active: false,
-          txHash: '',
-          blockN: '',
-          blockData: '',
           logs: {
             0: {
               to: '',
               value: '',
+              txHash: '',
+              blockN: '',
+              blockData: '',
               time: ''
             }
           }
@@ -101,13 +111,13 @@
           event: '',
           loading: false,
           active: false,
-          txHash: '',
-          blockN: '',
-          blockData: '',
           logs: {
             0: {
               from: '',
               value: '',
+              txHash: '',
+              blockN: '',
+              blockData: '',
               time: ''
             }
           }
@@ -133,14 +143,17 @@
           for (let i = 0; i < this.txDataA.event.length; i++) {
             this.txDataA.logs[i].to = "<" + this.txDataA.event[i].returnValues[1] + ">";
             this.txDataA.logs[i].value = this.txDataA.event[i].returnValues[2];
-            this.txDataA.txHash = this.txDataA.event[i].transactionHash;
-            this.txDataA.blockN = await web3.eth.getTransaction(this.txDataA.txHash);
-            this.txDataA.blockData = await web3.eth.getBlock(this.txDataA.blockN.blockNumber);
-            this.txDataA.logs[i].time = String(new Date(this.txDataA.blockData.timestamp * 1000));
+            this.txDataA.logs[i].txHash = this.txDataA.event[i].transactionHash;
+            this.txDataA.logs[i].blockN = await web3.eth.getTransaction(this.txDataA.logs[i].txHash);
+            this.txDataA.logs[i].blockData = await web3.eth.getBlock(this.txDataA.logs[i].blockN.blockNumber);
+            this.txDataA.logs[i].time = String(new Date(this.txDataA.logs[i].blockData.timestamp * 1000));
             if (i + 1 != this.txDataA.event.length) {
               this.txDataA.logs[i + 1] = {
                 to: '',
                 value: '',
+                txHash: '',
+                blockN: '',
+                blockData: '',
                 time: ''
               }
             }
@@ -167,14 +180,17 @@
           for (let i = 0; i < this.txDataB.event.length; i++) {
             this.txDataB.logs[i].from = "<" + this.txDataB.event[i].returnValues[0] + ">";
             this.txDataB.logs[i].value = this.txDataB.event[i].returnValues[2];
-            this.txDataB.txHash = this.txDataB.event[i].transactionHash;
-            this.txDataB.blockN = await web3.eth.getTransaction(this.txDataB.txHash);
-            this.txDataB.blockData = await web3.eth.getBlock(this.txDataB.blockN.blockNumber);
-            this.txDataB.logs[i].time = String(new Date(this.txDataB.blockData.timestamp * 1000));
+            this.txDataB.logs[i].txHash = this.txDataB.event[i].transactionHash;
+            this.txDataB.logs[i].blockN = await web3.eth.getTransaction(this.txDataB.logs[i].txHash);
+            this.txDataB.logs[i].blockData = await web3.eth.getBlock(this.txDataB.logs[i].blockN.blockNumber);
+            this.txDataB.logs[i].time = String(new Date(this.txDataB.logs[i].blockData.timestamp * 1000));
             if (i + 1 != this.txDataB.event.length) {
               this.txDataB.logs[i + 1] = {
                 from: '',
                 value: '',
+                txHash: '',
+                blockN: '',
+                blockData: '',
                 time: ''
               }
             }

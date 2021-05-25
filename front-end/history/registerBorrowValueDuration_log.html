@@ -32,10 +32,15 @@
           <div v-show="!loading">
             <div v-show="event.length > 0">
               <div class="log" v-for="log in logs" :key="log.id" v-show="active">
-                <p v-cloak>You registered borrow value as {{log.value}} credit
-                 and borrow duration as {{log.durationData.days}} days {{log.durationData.hours}} hours 
-                 {{log.durationData.minutes}} minutes {{log.durationData.seconds}} seconds
-                 ( = {{log.duration}} seconds) at {{log.time}}.</p>
+                <ul>
+                  <li>You registered borrow value as {{log.value}} credit
+                    and borrow duration as {{log.durationData.days}} days {{log.durationData.hours}} hours 
+                    {{log.durationData.minutes}} minutes {{log.durationData.seconds}} seconds
+                    ( = {{log.duration}} seconds).</li>
+                  <li>Transaction Hash: {{log.txHash}}</li>
+                  <li>Block: {{log.blockN.blockNumber}}</li>
+                  <li>Timestamp: {{log.time}}</li>
+                </ul>
               </div>
             </div>
             <div v-show="event.length === 0">
@@ -73,9 +78,6 @@
         event: '',
         loading: false,
         active: false,
-        txHash: '',
-        blockN: '',
-        blockData: '',
         logs: {
           0: {
             value: '',
@@ -86,6 +88,9 @@
               minutes: '',
               seconds: ''
             },
+            txHash: '',
+            blockN: '',
+            blockData: '',
             time: ''
           }
         }  
@@ -111,10 +116,10 @@
             this.logs[i].value = this.event[i].returnValues[1];
             this.logs[i].duration = this.event[i].returnValues[2];
             this.arrangeDuration(Number(this.logs[i].duration), i);
-            this.txHash = this.event[i].transactionHash;
-            this.blockN = await web3.eth.getTransaction(this.txHash);
-            this.blockData = await web3.eth.getBlock(this.blockN.blockNumber);
-            this.logs[i].time = String(new Date(this.blockData.timestamp * 1000));
+            this.logs[i].txHash = this.event[i].transactionHash;
+            this.logs[i].blockN = await web3.eth.getTransaction(this.logs[i].txHash);
+            this.logs[i].blockData = await web3.eth.getBlock(this.logs[i].blockN.blockNumber);
+            this.logs[i].time = String(new Date(this.logs[i].blockData.timestamp * 1000));
             if (i + 1 != this.event.length) {
               this.logs[i + 1] = {
                 value: '',
@@ -125,6 +130,9 @@
                   minutes: '',
                   seconds: ''
                 },
+                txHash: '',
+                blockN: '',
+                blockData: '',
                 time: ''
               }
             }
