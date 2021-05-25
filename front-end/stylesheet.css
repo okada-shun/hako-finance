@@ -253,24 +253,18 @@ button:hover {
 }
 
 .log {
-  width: 700px;
+  width: 850px;
   border: solid 1px chocolate;
   border-radius: 10px;
   background-color:navajowhite;
   margin: 20px auto;
 }
 
-.log p {
-  font-size: 18px;
-  padding: 10px;
-  margin: 10px;
-}
-
 .log li {
-  font-size: 18px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin: 10px;
+  font-size: 15px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin: 5px 35px 5px 10px;
 }
 
 .history {
