@@ -203,20 +203,6 @@ var hakoABI = [
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [],
-    "name": "lendCount_",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "constant": false,
     "inputs": [
       {
@@ -347,6 +333,20 @@ var hakoABI = [
   {
     "constant": true,
     "inputs": [],
+    "name": "lendCount",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
     "name": "hakoOwner",
     "outputs": [
       {
@@ -464,49 +464,6 @@ var hakoABI = [
     ],
     "payable": false,
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "lendRecords",
-    "outputs": [
-      {
-        "name": "lendRecordId_",
-        "type": "uint256"
-      },
-      {
-        "name": "lendFrom_",
-        "type": "address"
-      },
-      {
-        "name": "lendTo_",
-        "type": "address"
-      },
-      {
-        "name": "lendValue_",
-        "type": "uint256"
-      },
-      {
-        "name": "lendDuration_",
-        "type": "uint256"
-      },
-      {
-        "name": "lendTime_",
-        "type": "uint256"
-      },
-      {
-        "name": "lendBackChecker_",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -706,6 +663,10 @@ var hakoABI = [
       {
         "name": "hakoSymbol",
         "type": "string"
+      },
+      {
+        "name": "_decimals",
+        "type": "uint256"
       }
     ],
     "payable": false,
