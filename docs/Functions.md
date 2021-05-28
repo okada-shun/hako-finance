@@ -1,4 +1,4 @@
-# Functions of Hako System
+# Functions of Hako Finance
 
 `"A's credit to B" = "B's debt to A"`  ---  formula (1)  
 
@@ -14,94 +14,107 @@ Creditor Member's credit to Debtor Member = Debtor Member's debt to Creditor Mem
 If Creditor Member's credit to Member increases, Debtor Member's debt to Member increases.  
 If Creditor Member's credit to Member decreases, Debtor Member's debt to Member decreases.  
 
+## transfer
+
+ = One account transfers his token to other account.
+
 ## joinHako
 
- = New member joins the Hako.  
+ = New member joins Hako by depositing some of his token to Hako.
 
-Equivalent to that new member transforms his token into credit to Hako.  
-Hako gets token instead of owing debt to new member.  
 New member gets credit instead of losing his token.  
+Hako gets token instead of owing debt to new member.  
 So, Member's credit to Hako increases and Hako's debt to Member increases too.  
+Equivalent to that new member translates his token into credit.  
 
 ## leaveHako
 
- = Member leaves the Hako.
+ = Member leaves Hako.
 
-Leaving member must pay back all his debt to members and to hako.  
-credit to Hako of leaving member becomes to 0.  
+Credit to Hako of leaving member becomes to 0.  
 All token that he deposits to hako is returned to him.  
 So, Member's credit to Hako decreases and Hako's debt to Member decreases too.  
-If the hako doesn't have enough token, it can't return all his token. So, in this case, it must increase token and token total supply increases. This occurs in the case that one or some members owe debt to hako, the amount of credit to Hako owned by all members is more than the amount of token owned by hako.  
+If the member owes debt to hako or he is borrowing credit from other member, he can't leave.  
+If the member is lending his credit to other member, he can't leave.  
+
+If hako doesn't have enough token, it can't return all his token. So, in this case, it must increase token. Then, token total supply increases. This occurs in the case that one or some members owe debt to hako, the amount of credit owned by all members exceeds the amount of token owned by hako.  
 
 ## depositToken
 
- = Member deposits his token to the Hako.  
+ = Member deposits his token to Hako.
 
 The member gets credit instead of losing his token.  
 Hako gets token instead of owing debt to the member.  
 So, Member's credit to Hako increases and Hako's debt to Member increases too.  
+Equivalent to that the member translates his token into credit.  
 
 ## withdrawToken
 
- = Member withdraws token from the Hako.
+ = Member withdraws token from Hako.
 
-The member gets token instead of losing his credit to Hako.  
+The member gets token instead of losing his credit.  
 Hako loses its token instead of reducing its debt to Member.  
 So, Member's credit to Hako decreases and Hako's debt to Member decreases too.  
-This is the opposite operation of deposit token.  
+Equivalent to that the member translates his credit into token.  
+This is the opposite operation of deposit-token.  
+If the member owes debt to hako or he is borrowing credit from other member, he can't withdraw token.  
 
-If the member owes debt to hako or to other member, he can't withdraw token.  
-If the hako doesn't have enough token, he can't withdraw all his token. So, in this case, it must increase token. Then, token total supply increases. This occurs in the case that one or some members owe debt to hako, the amount of credit to Hako owned by all members is more than the amount of token owned by hako.  
+If hako doesn't have enough token, he can't withdraw all his token. So, in this case, it must increase token. Then, token total supply increases. This occurs in the case that one or some members owe debt to hako, the amount of credit owned by all members exceeds the amount of token owned by hako.  
 
 ## transferCredit
 
- = Member transfers his credit( to Hako) to other member.  
- 
-Transferer member can't transfer credit to non member account.  
+ = Member transfers his credit( to Hako) to other member.
+
+Transferer member can't transfer credit to non-member account.  
 Transferer member can't transfer credit to the member who has debt to Hako.  
 
-## registerBorrowValue
+## registerBorrowValueDuration
 
- = Member registers the amount of credit( to Hako) that he wants to borrow.  
+ = Member registers the amount of credit( to Hako) that he wants to borrow and the duration of lending that he wants to borrow.
 
-Member can't register more value than his net assets(= token + credit - debt).  
-The member who has debt to Member can't register borrow value.  
+Member can't register more value than the upper limit.  
+Member can't register more value than his net assets( = token + credit - debt).  
+If the member is borrowing credit from other member, he can't register borrow value and borrow duration.  
 
 ## lendCredit
 
- = Member lends credit( to Hako) to other member for a certain duration.  
+ = Member lends credit( to Hako) to other member for a certain duration.
 
-Borrower member can borrow within the borrow value that he registers.  
-Before lending, borrower member's debt to Hako must be zero because there is a risk that debtor member's debt to Hako swells up too high.  
+Lender member can lend his credit to borrower member under the borrow value that the borrower registered.  
+Lender member can lend his credit to borrower member over the borrow duration that the borrower registered.  
+If the borrower member owes debt to hako, the creditor can't lend his credit to him.  
 
 ## collectDebtFrom
 
- = Creditor member collects debt from debtor member.  
+ = Creditor member collects debt from debtor member.
 
-Creditor can't collect debt if the duration is yet to be passed.  
-In the case that debtor has enough credit to Hako, returns those, then returns to the situation before lending.  
-In the case that debtor has not enough credit to Hako, in place of him, the hako pays back to creditor to make up for. Then, the debtor owes debt to hako, so his debt to Hako increases and hako's credit to Member increases too.  
+The creditor can't collect debt if the duration is yet to be passed.  
+In the case that the debtor has enough credit, returns those, then returns to the situation before lending.  
+In the case that the debtor has not enough credit, in place of him, hako pays back to creditor to make up for. Then, the debtor owes debt to hako, so his debt to Hako increases and hako's credit to Member increases too.  
 
 ## returnDebtTo
 
- = Debtor member returns his debt to creditor member.  
+ = Debtor member returns his debt to creditor member.
+
+The debtor can return his debt even if the duration is yet to be passed.  
 
 ## creditCreationByMember
 
- = Member creates credit to Hako(debt to Hako).  
+ = Member creates credit.
 
 Member's credit to Hako increases and Hako's debt increases too.  
 Member's debt to Hako increases and Hako's credit increases too.  
-The member who has debt to Hako can't create credit.  
-Member can't create more credit than his net assets(= token + credit - debt).    
-If member creates too much credit(and debt), there is a possibility that it falls into hyper inflation. Not to do so, some restrictions are necessary.  
+Member can't create more credit than the upper limit.  
+Member can't create more credit than his net assets( = token + credit - debt).  
+If the member owes debt to hako, he can't create credit.  
 
 ## arrangement
 
- = Member who has debt to Hako reduces his debt to Hako by reducing his credit to Hako.  
+ = Member who has debt to Hako reduces his debt by reducing his credit.
 
 Member's credit to Hako decreases and Hako's debt decreases too.  
 Member's debt to Hako decreases and Hako's credit decreases too.  
-This arrangement is the opposite operation of credit creation.  
+This arrangement is the opposite operation of credit-creation.  
 
-
+Next...  
+→ [Theory of Hako Finance](https://github.com/okada-shun/hako-finance/blob/master/docs/Theory.md)

@@ -1,6 +1,6 @@
-# Theory of Hako System
+# Theory of Hako Finance
 
-Hako System has two components, Hako and Member.
+Hako Finance system has two components, Hako and Member.
 
 Hako is a smart contract, and has one's own contract address.  
 Member is the address to join Hako. They join Hako, deposit their hako-token to Hako. At this time, Hako gives IOU to the members as a replacement for deposited token. This IOU's name is "credit to Hako". By using this credit, members can do some transactions with the other members.
@@ -118,3 +118,6 @@ A: Because you can translate credit into token.
 
 Q: Then, why token is valuable?  
 A: Because there are some accounts that have debt to Hako. By getting token, they can return their debt to Hako and they can do some transactions again. Those demand for token supports the value of token.
+
+Next...  
+→ [Hako owner](https://github.com/okada-shun/hako-finance/blob/master/docs/HakoOwner.md)

@@ -1,10 +1,10 @@
-# Main features of Hako System
+# Main features of Hako Finance
 
 ## Abstract
 
-Hako System has two components, Hako and Member.
+Hako Finance system has two components, Hako and Member.
 
-Hako is a smart contract, comes from japanese word "匣(ハコ)". This means "box" in English. Hako has one's own contract address.  
+Hako is a smart contract, comes from japanese word "ハコ". This means "box" in English. Hako has one's own contract address.  
 Member is the address to join Hako. They join Hako, deposit their hako-token to Hako.  
 
 Hako gives IOU to the members as a replacement for deposited token. This IOU's name is "credit to Hako". This means "Member's credit to Hako". On the other hand, this means "Hako's debt to Member". In other words, the following equation holds up.
@@ -16,7 +16,7 @@ Generalizing this, the following equation holds up any time.
 `"A's credit to B" = "B's debt to A"`  ---  formula (1)
 
 Can't understand?  
-I give you some examples. In the following passage, I write "Member's credit to Hako" as "credit" and "Hako Token" as "token". In examples, I write 3 members' names as "Bob", "Carol", "Dave". ("Alice" is absence.)
+I give you some examples. In the following passage, I write "Member's credit to Hako" as "credit" and "Hako Token" as "token". In examples, I write 3 members' names as "Bob", "Carol", "Dave". ("Alice" is absence this time. She is given a special role!)
 
 Example1:
 
@@ -69,7 +69,7 @@ By the way, what is "credit to Hako"? Why members exchange their own token for t
 
 ## Main functions
 
-Hako System has some functions. Listed below.
+Hako Finance system has some functions. Listed below.
 
 1. transfer "credit to Hako"
 2. lend "credit to Hako"
@@ -200,3 +200,6 @@ On the side of hako, its credit to Member decreases by 100 because Bob's debt to
 This debt arrangement is the opposite of credit creation. Credit creation is the operation to increase member's credit and debt and increase hako's credit and debt. In contrast, this is the operation to decrease member's credit and debt and decrease hako's credit and debt.
 
 As you can see from above 11 tables, total Member's credit to Hako is equal to Hako's debt to Member and total Member's debt to Hako is equal to Hako's credit to Member. These are derived from formula (1).
+
+Next...  
+→ [Functions of Hako Finance](https://github.com/okada-shun/hako-finance/blob/master/docs/Functions.md)
