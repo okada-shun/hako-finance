@@ -1,6 +1,6 @@
-# Hako System Project / 匣制計劃
+# Hako Finance Project
 
-"Hako System Project" is a project to make an innovative system for creating token.   
+"Hako Finance Project" is a project to make an innovative system for creating token.   
 In this system, makes "Hako Token" and uses it.
 
 ## Hako Token is like what token?
@@ -17,10 +17,12 @@ Hako Token is based on the latter theory unlike the other tokens. In docs, I tel
 
 ## docs link
 
-[Main features of Hako System](https://github.com/okada-shun/hako-system/blob/master/docs/MainFeatures.md)
+[Main features of Hako Finance](https://github.com/okada-shun/hako-finance/blob/master/docs/MainFeatures.md)
 
-[Functions of Hako System](https://github.com/okada-shun/hako-system/blob/master/docs/Functions.md)
+[Functions of Hako Finance](https://github.com/okada-shun/hako-finance/blob/master/docs/Functions.md)
 
-[Theory of Hako System](https://github.com/okada-shun/hako-system/blob/master/docs/Theory.md)
+[Theory of Hako Finance](https://github.com/okada-shun/hako-finance/blob/master/docs/Theory.md)
 
-[About the future project](https://github.com/okada-shun/hako-system/blob/master/docs/FutureProject.md)
+[Hako owner](https://github.com/okada-shun/hako-finance/blob/master/docs/HakoOwner.md)
+
+[About the future project](https://github.com/okada-shun/hako-finance/blob/master/docs/FutureProject.md)
