@@ -1,9 +1,9 @@
 const { assert } = require('chai');
-const expectEvent = require('openzeppelin-solidity/test/helpers/expectEvent');
+const expectEvent = require('@openzeppelin/test-helpers/src/expectEvent');
 
 const Hako = artifacts.require('./Hako.sol');
 const utils = require("./helpers/utils");
-const time = require("./helpers/time");
+const time = require("@openzeppelin/test-helpers/src/time");
 
 contract('HakoBase_b', ([alice, bob, carol, dave, ...accounts]) => {
 

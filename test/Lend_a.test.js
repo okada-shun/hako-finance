@@ -1,5 +1,5 @@
 const { assert } = require('chai');
-const expectEvent = require('openzeppelin-solidity/test/helpers/expectEvent');
+const expectEvent = require('@openzeppelin/test-helpers/src/expectEvent');
 
 const BigNumber = web3.BigNumber;
 
@@ -10,7 +10,7 @@ const should = require('chai')
 
 const Hako = artifacts.require('./Hako.sol');
 const utils = require("./helpers/utils");
-const time = require("./helpers/time");
+const time = require("@openzeppelin/test-helpers/src/time");
 
 contract('Lend_a', ([alice, bob, carol, dave, ...accounts]) => {
   
@@ -252,7 +252,7 @@ contract('Lend_a', ([alice, bob, carol, dave, ...accounts]) => {
       assert.equal(event.args.value, 100);
       assert.equal(event.args.duration, 60);
       assert.equal(event.args.id, 1);
-      lendRecords[5].should.be.bignumber.equal(event.args.time);
+      lendRecords[5].toNumber().should.be.bignumber.equal(event.args.time.toNumber());
     });
       
   });

@@ -1,5 +1,5 @@
 const { assert } = require('chai');
-const expectEvent = require('openzeppelin-solidity/test/helpers/expectEvent');
+const expectEvent = require('@openzeppelin/test-helpers/src/expectEvent');
 
 const BigNumber = web3.BigNumber;
 
