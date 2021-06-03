@@ -7,4 +7,4 @@ module.exports = function(deployer) {
   const hakoSymbol = "HKPT";
   const decimals = 0;
   deployer.deploy(Hako, initialSupply, initialUpperLimit, hakoName, hakoSymbol, decimals);
-}
+};
