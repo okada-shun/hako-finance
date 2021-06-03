@@ -45,8 +45,3 @@ contract CreditCreation is Lend {
   }
 
 }
-
-
-
-  
-

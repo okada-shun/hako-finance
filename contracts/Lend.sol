@@ -69,7 +69,7 @@ contract Lend is HakoBase {
 
   ///@notice Gets the registered borrowValue and borrowDuration of the specified address.
   ///@param _member the member address who registered them.
-  function getBorrowValueDurationOf(address _member) public view returns (uint256[2]) {
+  function getBorrowValueDurationOf(address _member) public view returns (uint256[2] memory) {
     return borrowValueDuration[_member];
   }
 

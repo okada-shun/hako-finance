@@ -16,7 +16,7 @@ contract Hako is CreditCreation {
   ///@param hakoName Hako's name.
   ///@param hakoSymbol Hako token's symbol.
   ///@param _decimals decimals of hako token.
-  constructor(uint256 initialSupply, uint256 initialUpperLimit, string hakoName, string hakoSymbol, uint256 _decimals) public {
+  constructor(uint256 initialSupply, uint256 initialUpperLimit, string memory hakoName, string memory hakoSymbol, uint256 _decimals) public {
     hakoOwner = msg.sender;
     hakoAddress = address(this);
     totalSupply_ = initialSupply;
