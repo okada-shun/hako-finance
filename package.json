@@ -17,7 +17,8 @@
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^3.0.0",
-    "openzeppelin-solidity": "^4.1.0"
+    "openzeppelin-solidity": "^4.1.0",
+    "truffle-security": "^1.7.3"
   },
   "devDependencies": {
     "@openzeppelin/test-helpers": "^0.5.11"
