@@ -3,6 +3,7 @@ const expectEvent = require('@openzeppelin/test-helpers/src/expectEvent');
 
 const Hako = artifacts.require('./Hako.sol');
 const utils = require("./helpers/utils");
+const time = require("@openzeppelin/test-helpers/src/time");
 
 contract('HakoOwner', ([alice, bob, carol, dave, ...accounts]) => {
 
@@ -52,7 +53,7 @@ contract('HakoOwner', ([alice, bob, carol, dave, ...accounts]) => {
   });
 
   describe('changeUpperLimit', () => {
-
+    
     it('should change upperLimit', async function () {
       await this.hako.changeUpperLimit(600, {from: alice});
       const upperLimit = await this.hako.upperLimit();
@@ -69,6 +70,78 @@ contract('HakoOwner', ([alice, bob, carol, dave, ...accounts]) => {
       const event = await expectEvent.inLogs(logs, 'ChangeUpperLimit');
       assert.equal(event.args.hakoOwner, alice);
       assert.equal(event.args.newUpperLimit, 600);
+    });
+
+  });
+
+  describe('getReward', () => {
+
+    it('should get reward', async function () {
+      await this.hako.transfer(bob, 300, {from: alice});
+      await this.hako.transfer(carol, 200, {from: alice});
+      await this.hako.transfer(dave, 100, {from: alice});
+      await this.hako.joinHako(300, {from: bob});
+      await this.hako.joinHako(200, {from: carol});
+      await this.hako.joinHako(100, {from: dave});
+      await this.hako.getReward({from: alice});
+      //balance of hako is 594 (= 600 - 600/100)
+      //balance of alice is 406 (= 400 + 600/100)
+      const balanceOfHakoA = await this.hako.balanceOfHako();
+      const balanceOfAliceA = await this.hako.balanceOf(alice);
+      assert.equal(balanceOfHakoA, 594);
+      assert.equal(balanceOfAliceA, 406);
+      await time.increase(time.duration.seconds(86400));
+      await this.hako.getReward({from: alice});
+      //balance of hako is 589 (= 594 - 594/100)
+      //balance of alice is 411 (= 406 + 594/100)
+      const balanceOfHakoB = await this.hako.balanceOfHako();
+      const balanceOfAliceB = await this.hako.balanceOf(alice);
+      assert.equal(balanceOfHakoB, 589);
+      assert.equal(balanceOfAliceB, 411);
+      await time.increase(time.duration.seconds(86400));
+      await this.hako.getReward({from: alice});
+      //balance of hako is 584 (= 589 - 589/100)
+      //balance of alice is 416 (= 411 + 589/100)
+      const balanceOfHakoC = await this.hako.balanceOfHako();
+      const balanceOfAliceC = await this.hako.balanceOf(alice);
+      assert.equal(balanceOfHakoC, 584);
+      assert.equal(balanceOfAliceC, 416);
+    });
+    
+    it('should not allow non-hakoOwner accounts to get reward', async function () {
+      await this.hako.transfer(bob, 300, {from: alice});
+      await this.hako.transfer(carol, 200, {from: alice});
+      await this.hako.transfer(dave, 100, {from: alice});
+      await this.hako.joinHako(300, {from: bob});
+      await this.hako.joinHako(200, {from: carol});
+      await this.hako.joinHako(100, {from: dave});
+      await utils.shouldThrow(this.hako.getReward({from: bob}));
+    });
+
+    it('should not get reward if 24 hours is yet to be passed', async function () {
+      await this.hako.transfer(bob, 300, {from: alice});
+      await this.hako.transfer(carol, 200, {from: alice});
+      await this.hako.transfer(dave, 100, {from: alice});
+      await this.hako.joinHako(300, {from: bob});
+      await this.hako.joinHako(200, {from: carol});
+      await this.hako.joinHako(100, {from: dave});
+      await this.hako.getReward({from: alice});
+      await time.increase(time.duration.seconds(82800));
+      await utils.shouldThrow(this.hako.getReward({from: alice}));
+    });
+
+    it('should emit a GetReward event', async function () {
+      await this.hako.transfer(bob, 300, {from: alice});
+      await this.hako.transfer(carol, 200, {from: alice});
+      await this.hako.transfer(dave, 100, {from: alice});
+      await this.hako.joinHako(300, {from: bob});
+      await this.hako.joinHako(200, {from: carol});
+      await this.hako.joinHako(100, {from: dave});
+      const {logs} = 
+        await this.hako.getReward({from: alice});
+      const event = await expectEvent.inLogs(logs, 'GetReward');
+      assert.equal(event.args.hakoOwner, alice);
+      assert.equal(event.args.rewardValue, 6);
     });
 
   });
