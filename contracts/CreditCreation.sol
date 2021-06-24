@@ -7,6 +7,8 @@ import "./Lend.sol";
 ///@notice Creates creditToHako(debtToHako).
 contract CreditCreation is Lend {
 
+  using SafeMath for uint256;
+
   event CreditCreationByMember(address indexed member, uint256 value);
   event Arrangement(address indexed member, uint256 value);
 

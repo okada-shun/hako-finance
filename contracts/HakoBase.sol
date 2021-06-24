@@ -8,14 +8,13 @@ import "./HakoOwner.sol";
 ///@notice A's credit to B = B's debt to A
 contract HakoBase is HakoOwner {
 
+  using SafeMath for uint256;
+
   event JoinHako(address indexed newMember, uint256 value);
   event LeaveHako(address indexed member, uint256 value);
   event DepositToken(address indexed member, uint256 value);
   event WithdrawToken(address indexed member, uint256 value);
   event TransferCredit(address indexed from, address indexed to, uint256 value);
-
-  ///@notice Hako contract's address as hako address
-  address public hakoAddress;
 
   ///@notice The number of hako members
   uint256 public memberCount;

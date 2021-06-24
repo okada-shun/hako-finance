@@ -6,10 +6,17 @@ import "./BasicToken.sol";
 ///@title Hako owner
 ///@dev Hako owner can change owner position to the other account.
 ///@dev Hako owner can change upper limit of borrowing and credit-creation value.
+///@dev Hako owner can get 1% token owned by hako as reward every 24 hours.
 contract HakoOwner is BasicToken {
+
+  using SafeMath for uint256;
 
   event ChangeHakoOwner(address indexed oldHakoOwner, address indexed newHakoOwner);
   event ChangeUpperLimit(address indexed hakoOwner, uint256 newUpperLimit);
+  event GetReward(address indexed hakoOwner, uint256 rewardValue);
+
+  ///@notice Hako contract's address as hako address
+  address public hakoAddress;
 
   ///@notice Hako owner's address
   address public hakoOwner;
@@ -19,6 +26,9 @@ contract HakoOwner is BasicToken {
 
   ///@notice 1 if the address is a member, 0 if not.
   mapping(address => uint256) internal memberCheck;
+
+  ///@notice Time that hako owner get reward.
+  uint256 public rewardTime;
 
   modifier onlyHakoOwner() {
     require(msg.sender == hakoOwner);
@@ -69,6 +79,18 @@ contract HakoOwner is BasicToken {
   {
     upperLimit = _value;
     emit ChangeUpperLimit(msg.sender, _value);
+    return true;
+  }
+
+  ///@notice Hako owner gets 1% token owned by hako as reward every 24 hours.
+  ///@notice Only hako owner can do.
+  function getReward() public onlyHakoOwner returns (bool) {
+    uint256 readyTime = rewardTime.add(86400);
+    require(block.timestamp >= readyTime);
+    uint256 rewardValue = balances[hakoAddress].div(100);
+    _transfer(hakoAddress, hakoOwner, rewardValue);
+    rewardTime = block.timestamp;
+    emit GetReward(hakoOwner, rewardValue);
     return true;
   }
   

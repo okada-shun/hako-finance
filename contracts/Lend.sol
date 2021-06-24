@@ -7,6 +7,8 @@ import "./HakoBase.sol";
 ///@notice creditToHako-lending between hako members
 contract Lend is HakoBase {
 
+  using SafeMath for uint256;
+
   event RegisterBorrowValueDuration(address indexed member, uint256 value, uint256 duration);
   event LendCredit(address indexed from, address indexed to, uint256 value, uint256 duration, uint256 id, uint256 time); 
   event CollectDebtFrom(address indexed creditor, address indexed debtor, uint256 id);
@@ -101,7 +103,7 @@ contract Lend is HakoBase {
     borrowValueDuration[_to][0] = borrowValueDuration[_to][0].sub(_value);
     lendCount = lendCount.add(1);
     uint256 id = lendCount;
-    uint256 time = now;
+    uint256 time = block.timestamp;
     lendRecords.push(LendRecord(id, msg.sender, _to, _value, _duration, time, 1));
     emit LendCredit(msg.sender, _to, _value, _duration, id, time);
     return true;
@@ -116,7 +118,7 @@ contract Lend is HakoBase {
     require(lendRecords[newId].lendBackChecker_ == 1);
     require(msg.sender == lendRecords[newId].lendFrom_);
     require(_debtor == lendRecords[newId].lendTo_);
-    require(now >= lendRecords[newId].lendTime_.add(lendRecords[newId].lendDuration_));
+    require(block.timestamp >= lendRecords[newId].lendTime_.add(lendRecords[newId].lendDuration_));
     if (creditToHako[_debtor] >= lendRecords[newId].lendValue_) { 
       _transferCredit(_debtor, msg.sender, lendRecords[newId].lendValue_);
       _membersCreditToMemberMembersDebtToMember(0, msg.sender, _debtor, lendRecords[newId].lendValue_);
