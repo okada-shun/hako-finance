@@ -340,7 +340,44 @@ And then, If Eric transfers 1200 credit to Flora and Flora withdraws 1200 credit
 Compared table11 with table14, the amount of token in table14 is larger than that in table11.  
 If hako owner increases the upper limit, the amount of token increases too. Conversely, if hako owner decreases the upper limit, the amount of token decreases too. In other words, hako owner can control the amount of token supply by changing the upper limit.
 
-By the way, this upper limit is used in credit lending between members. In credit lending, the member who can't return his debt will owe debt to Hako. So, to avoid that the member owes so much debt, the borrower member can't register more value than the upper limit.
+This upper limit is used in credit lending between members. In credit lending, the member who can't return his debt will owe debt to Hako. So, to avoid that the member owes so much debt, the borrower member can't register more value than the upper limit.
 
+By the way, how can Alice make a profit by playing a role as hako owner?
+
+About hako owner's reward, I give an example.
+
+Example3:
+
+Alice is a hako owner. Bob, Carol, Dave, Eric, and Flora are members.  
+Starting from the table14, if Flora deposits 1200 token to Hako, it comes to as follows.
+
+|      1     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
+| :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | 
+| Hako | 1200             | -                            | -                          | 1100                            | 1200                       | 
+| Alice(owner) | 0              | -                          | -                          | -                            | -                          | 
+| Bob   | 0              | 0                          | 100                          | -                            | -                          | 
+| Carol   | 0             | 0                            | 200                       | -                            | -                          | 
+| Dave   | 0              | 0                          | 300                          | -                            | -                          | 
+| Eric   | 0              | 0                          | 500                          | -                            | -                          | 
+| Flora   | 0              | 1200                          | 0                          | -                            | -                          | 
+
+Hako owner can get 1% token owned by Hako as reward, so Alice can get 1200/100 (= 12) token. This reward is paid every 24 hours.
+
+|      2     | Balance of Token | Member's credit to Hako | Member's debt to Hako | Hako's credit to Member | Hako's debt to Member | 
+| :-------: | :--------------: | :--------------------------: | :------------------------: | :--------------------------: | :------------------------: | 
+| Hako | 1188             | -                            | -                          | 1100                            | 1200                       | 
+| Alice(owner) | 12              | -                          | -                          | -                            | -                          | 
+| Bob   | 0              | 0                          | 100                          | -                            | -                          | 
+| Carol   | 0             | 0                            | 200                       | -                            | -                          | 
+| Dave   | 0              | 0                          | 300                          | -                            | -                          | 
+| Eric   | 0              | 0                          | 500                          | -                            | -                          | 
+| Flora   | 0              | 1200                          | 0                          | -                            | -                          | 
+
+By this, total "Member's credit to Hako" (= "Hako's debt to Member") becomes larger than "Balance of Token" owned by Hako (1200 > 1188). So, if Flora withdraws all her token from Hako, the amount of token increases by 12.
+
+Of course, this can lead to the inflation of token. So, it's necessary to think about this owner's reward.
+
+Prev...  
+→ [Theory of Hako Finance](https://github.com/okada-shun/hako-finance/blob/master/docs/Theory.md)  
 Next...  
 → [About the future project](https://github.com/okada-shun/hako-finance/blob/master/docs/FutureProject.md)

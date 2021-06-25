@@ -116,5 +116,7 @@ Member's credit to Hako decreases and Hako's debt decreases too.
 Member's debt to Hako decreases and Hako's credit decreases too.  
 This arrangement is the opposite operation of credit-creation.  
 
+Prev...  
+→ [Main features of Hako Finance](https://github.com/okada-shun/hako-finance/blob/master/docs/MainFeatures.md)  
 Next...  
 → [Theory of Hako Finance](https://github.com/okada-shun/hako-finance/blob/master/docs/Theory.md)

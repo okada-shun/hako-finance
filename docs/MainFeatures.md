@@ -201,5 +201,7 @@ This debt arrangement is the opposite of credit creation. Credit creation is the
 
 As you can see from above 11 tables, total Member's credit to Hako is equal to Hako's debt to Member and total Member's debt to Hako is equal to Hako's credit to Member. These are derived from formula (1).
 
+Prev...  
+→ [README](https://github.com/okada-shun/hako-finance/blob/master/README.md)  
 Next...  
 → [Functions of Hako Finance](https://github.com/okada-shun/hako-finance/blob/master/docs/Functions.md)

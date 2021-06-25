@@ -119,5 +119,7 @@ A: Because you can translate credit into token.
 Q: Then, why token is valuable?  
 A: Because there are some accounts that have debt to Hako. By getting token, they can return their debt to Hako and they can do some transactions again. Those demand for token supports the value of token.
 
+Prev...  
+→ [Functions of Hako Finance](https://github.com/okada-shun/hako-finance/blob/master/docs/Functions.md)  
 Next...  
 → [Hako owner](https://github.com/okada-shun/hako-finance/blob/master/docs/HakoOwner.md)
