@@ -40,7 +40,7 @@ contract BasicToken {
     return true;
   }
 
-  ///@notice The base function to transfer token from one address to the other address.
+  ///@notice The base function to transfer token from one address to other address.
   ///@param _from The address to transfer from.
   ///@param _to The address to transfer to.
   ///@param _value The amount to be transferred.

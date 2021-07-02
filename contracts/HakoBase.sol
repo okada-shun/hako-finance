@@ -31,13 +31,13 @@ contract HakoBase is HakoOwner {
   ///@notice Hako member's debt to other members for each account
   mapping(address => uint256) internal debtToMember;
 
-  ///@notice Hako contract address's credit to members as hako address's credit
-  ///@notice Equal to member's total debtToHako.
+  ///@notice Hako contract address's credit to members as hako's credit
+  ///@notice Equal to total members' debtToHako.
   ///@notice SUM(member's debt to hako) = hako's credit to member
   uint256 internal hakoCredit_;
 
-  ///@notice Hako contract address's debt to members as hako address's debt
-  ///@notice Equal to member's total creditToHako.
+  ///@notice Hako contract address's debt to members as hako's debt
+  ///@notice Equal to total members' creditToHako.
   ///@notice SUM(member's credit to hako) = hako's debt to member
   uint256 internal hakoDebt_;
 
@@ -101,8 +101,8 @@ contract HakoBase is HakoOwner {
   }
 
   ///@notice Member leaves hako.
-  ///@notice The member who has debt can't leave.
-  ///@notice The member who is lending his credit can't leave.
+  ///@notice Member who has debt can't leave.
+  ///@notice Member who is lending his credit can't leave.
   ///@notice All his credit returns to him.
   function leaveHako() 
     public 
@@ -127,7 +127,7 @@ contract HakoBase is HakoOwner {
     return memberCheck[_who];
   }
 
-  ///@notice Member deposits his token to hako.
+  ///@notice Member deposits his token to hako contract.
   ///@param _value The amount of token that the member deposits to hako.
   function depositToken(
     uint256 _value
@@ -143,7 +143,8 @@ contract HakoBase is HakoOwner {
     return true;
   }
 
-  ///@notice Member withdraws token from hako contract.
+  ///@notice Member withdraws his token from hako contract.
+  ///@notice Member who has debt can't withdraw.
   ///@param _value The amount of token that the member withdraws from hako.
   function withdrawToken(
     uint256 _value
@@ -174,8 +175,9 @@ contract HakoBase is HakoOwner {
     }
   }
 
-  ///@notice Transfer creditToHako to the other member.
+  ///@notice Transfer creditToHako to other member.
   ///@dev Like as ERC20 token's transfer function.
+  ///@notice Transferer can't transfer his credit to the member who has debtToHako.
   ///@param _to The address to transfer creditToHako to.
   ///@param _value The amount of creditToHako to be transferred.
   function transferCredit(
@@ -195,7 +197,7 @@ contract HakoBase is HakoOwner {
     return true;
   }
 
-  ///@notice The base function to transfer creditToHako from one address to the other address.
+  ///@notice The base function to transfer creditToHako from one address to other address.
   ///@param _from The address to transfer creditToHako from.
   ///@param _to The address to transfer creditToHako to.
   ///@param _value The amount of creditToHako to be transferred.

@@ -9,18 +9,18 @@ contract Lend is HakoBase {
 
   using SafeMath for uint256;
 
-  event RegisterBorrowValueDuration(address indexed member, uint256 value, uint256 duration);
+  event RegisterBorrowing(address indexed member, uint256 value, uint256 duration);
   event LendCredit(address indexed from, address indexed to, uint256 value, uint256 duration, uint256 id, uint256 time); 
   event CollectDebtFrom(address indexed creditor, address indexed debtor, uint256 id);
   event ReturnDebtTo(address indexed debtor, address indexed creditor, uint256 id);
 
-  ///@notice A record of creditToHako-lending between hako members.
+  ///@notice Record of creditToHako-lending between hako members.
   ///@notice lendRecordId_ is the number of lending count.
   ///@notice lendFrom_ is the address to lend creditToHako (= creditor member).
   ///@notice lendTo_ is the address to borrow creditToHako (= debtor member).
   ///@notice lendValue_ is the amount of creditToHako to be lended.
   ///@notice lendDuration_ is the duration of lending.
-  ///@notice lendTime_ is the time to be done of lending.
+  ///@notice lendTime_ is the time when lending is done.
   ///@notice lendBackChecker_ is 0 if lended credit back, 1 if not back.
   struct LendRecord {
     uint256 lendRecordId_;
@@ -36,19 +36,20 @@ contract Lend is HakoBase {
   ///@notice Added every time lending is done.
   uint256 public lendCount;
   
-  ///@notice Created LendRecords are stored in this.
+  ///@notice Created lendRecords are stored in this.
   LendRecord[] internal lendRecords;
 
   /**
   @notice The amount of creditToHako that hako member thinks he wants to borrow and 
-  the duration of borrowing that hako member thinks he wants to borrow creditToHako.
+  the duration of borrowing that hako member thinks he wants to borrow creditToHako for.
    */
   mapping(address => uint256[2]) internal borrowValueDuration;
 
   ///@notice Registers the amount of creditToHako and the duration of borrowing that hako member thinks he wants to borrow.
+  ///@notice Member who is borrowing credit can't register.
   ///@param _value The amount of creditToHako that the member registers.
   ///@param _duration The duration of borrowing that the member registers.
-  function registerBorrowValueDuration(
+  function registerBorrowing(
     uint256 _value, 
     uint256 _duration
   ) 
@@ -65,23 +66,24 @@ contract Lend is HakoBase {
     require(_value <= netAssets);
     borrowValueDuration[msg.sender][0] = _value;
     borrowValueDuration[msg.sender][1] = _duration;
-    emit RegisterBorrowValueDuration(msg.sender, _value, _duration);
+    emit RegisterBorrowing(msg.sender, _value, _duration);
     return true;
   }
 
   ///@notice Gets the registered borrowValue and borrowDuration of the specified address.
-  ///@param _member the member address who registered them.
-  function getBorrowValueDurationOf(address _member) public view returns (uint256[2] memory) {
+  ///@param _member The member address who registered them.
+  function borrowValueDurationOf(address _member) public view returns (uint256[2] memory) {
     return borrowValueDuration[_member];
   }
 
-  ///@notice Lend some creditToHako to the other member.
+  ///@notice Lend some creditToHako to other member.
+  ///@notice Lender can't lend his credit to the member who has debtToHako.
   ///@param _to The address to lend to (= debtor, msg.sender is creditor).
   ///@param _value The amount of creditToHako to be lended.
   ///@param _duration The duration of lending.
-  ///@notice lendCount is lendRecordId.
-  ///@notice Stores lending-record in lendRecords.
-  ///@notice msg.sender's(creditor's) creditToMember = _to's(debtor's) debtToMember
+  ///@notice lendCount becomes lendRecordId.
+  ///@notice Stores created lendRecord in lendRecords.
+  ///@notice msg.sender's(creditor's) credit to the debtor = _to's(debtor's) debt to the creditor = _value
   function lendCredit(
     address _to, 
     uint256 _value, 
@@ -112,7 +114,7 @@ contract Lend is HakoBase {
   ///@notice Creditor member collects debt from debtor member.
   ///@param _debtor The address of debtor member (corresponds to lendCredit function's _to param).
   ///@param _id The number of lendRecordId.
-  ///@dev Due to lendCredit function, there is a gap between _id and lendRecords's id.
+  ///@dev Due to lendCredit function, there is 1 gap between _id and lendRecords's id.
   function collectDebtFrom(address _debtor, uint256 _id) public returns (bool) {
     uint newId = _id.sub(1);
     require(lendRecords[newId].lendBackChecker_ == 1);
@@ -137,7 +139,7 @@ contract Lend is HakoBase {
   ///@notice Debtor member returns his debt to creditor member.
   ///@param _creditor The address of creditor member (corresponds to lendCredit function's msg.sender).
   ///@param _id The number of lendRecordId.
-  ///@dev Due to lendCredit function, there is a gap between _id and lendRecords's id.
+  ///@dev Due to lendCredit function, there is 1 gap between _id and lendRecords's id.
   function returnDebtTo(address _creditor, uint _id) public returns (bool) {
     uint newId = _id.sub(1);
     require(lendRecords[newId].lendBackChecker_ == 1);
@@ -151,9 +153,9 @@ contract Lend is HakoBase {
     return true;
   }
 
-  ///@notice Gets lendRecords information.
+  ///@notice Gets lendRecord data of the specified id.
   ///@param _id The number of lendRecordId.
-  function getLendRecords(
+  function lendRecordOf(
     uint _id
   ) 
     public 

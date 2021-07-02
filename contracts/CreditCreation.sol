@@ -9,13 +9,14 @@ contract CreditCreation is Lend {
 
   using SafeMath for uint256;
 
-  event CreditCreationByMember(address indexed member, uint256 value);
-  event Arrangement(address indexed member, uint256 value);
+  event CreateCredit(address indexed member, uint256 value);
+  event ReduceDebt(address indexed member, uint256 value);
 
   ///@notice Hako member creates creditToHako(debtToHako).
   ///@notice The member creates _value creditToHako, at the same time, he owes _value debtToHako.
+  ///@notice Member who has debtToHako can't create.
   ///@param _value The amount of credit(debt) to be created.
-  function creditCreationByMember(
+  function createCredit(
     uint256 _value
   ) 
     public 
@@ -31,18 +32,18 @@ contract CreditCreation is Lend {
     require(_value <= netAssets);
     _membersCreditToHakoHakosDebtToMember(1, msg.sender, _value);
     _membersDebtToHakoHakosCreditToMember(1, msg.sender, _value);
-    emit CreditCreationByMember(msg.sender, _value);
+    emit CreateCredit(msg.sender, _value);
     return true;
   }
 
   ///@notice Hako member reduces debtToHako by reducing creditToHako.
   ///@param _value The amount of creditToHako(and debtToHako) to be reduced.
-  function arrangement(uint256 _value) public returns (bool) {
+  function reduceDebt(uint256 _value) public returns (bool) {
     require(_value <= creditToHako[msg.sender]);
     require(_value <= debtToHako[msg.sender]);
     _membersCreditToHakoHakosDebtToMember(0, msg.sender, _value);
     _membersDebtToHakoHakosCreditToMember(0, msg.sender, _value);
-    emit Arrangement(msg.sender, _value);
+    emit ReduceDebt(msg.sender, _value);
     return true;
   }
 

@@ -4,7 +4,7 @@ pragma solidity >=0.4.22 <0.9.0;
 import "./BasicToken.sol";
 
 ///@title Hako owner
-///@dev Hako owner can change owner position to the other account.
+///@dev Hako owner can change owner position to other account.
 ///@dev Hako owner can change upper limit of borrowing and credit-creation value.
 ///@dev Hako owner can get 1% token owned by hako as reward every 24 hours.
 contract HakoOwner is BasicToken {
@@ -45,7 +45,7 @@ contract HakoOwner is BasicToken {
     _;
   }
 
-  ///@notice Gets the balance of token of hako owner's address.
+  ///@notice Gets the balance of token of hako owner.
   function balanceOfHakoOwner() public view returns (uint256) {
     return balances[hakoOwner];
   }
@@ -68,7 +68,6 @@ contract HakoOwner is BasicToken {
   }
 
   ///@notice Changes upper limit of borrowing and credit-creation value.
-  ///@notice Only hako owner can do.
   ///@param _value The value of new upper limit.
   function changeUpperLimit(
     uint256 _value
@@ -83,14 +82,13 @@ contract HakoOwner is BasicToken {
   }
 
   ///@notice Hako owner gets 1% token owned by hako as reward every 24 hours.
-  ///@notice Only hako owner can do.
   function getReward() public onlyHakoOwner returns (bool) {
     uint256 readyTime = rewardTime.add(86400);
     require(block.timestamp >= readyTime);
     uint256 rewardValue = balances[hakoAddress].div(100);
     _transfer(hakoAddress, hakoOwner, rewardValue);
     rewardTime = block.timestamp;
-    emit GetReward(hakoOwner, rewardValue);
+    emit GetReward(msg.sender, rewardValue);
     return true;
   }
   
