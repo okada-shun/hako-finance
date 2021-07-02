@@ -3,7 +3,7 @@
 Hako Finance system has two components, Hako and Member.
 
 Hako is a smart contract, and has one's own contract address.  
-Member is the address to join Hako. They join Hako, deposit their hako-token to Hako. At this time, Hako gives IOU to the members as a replacement for deposited token. This IOU's name is "credit to Hako". By using this credit, members can do some transactions with the other members.
+Member is the address to join Hako. They join Hako, deposit their hako-token to Hako. At this time, Hako gives IOU to the members as a replacement for deposited token. This IOU's name is "credit to Hako". By using this credit, members can do some transactions with other members.
 
 I have to explain the theory of this system in more detail.
 
@@ -103,7 +103,7 @@ In the table 1, there is only 100 token. However, in the table 9, there is 800 t
 Wait, from table 1 to table 9, the amount of token increased 8 times. Some of you may expect that the price of token falls in 1/8 because the supply of token increases 8 times.  
 However, at the same time, the demand for token also increases 8 times!  
 What's the meaning of this?  
-In the table 9, Bob has 100 debt, Carol has 200 debt, and Dave has 400 debt. Because of these debt, they can't withdraw their token from Hako, can't borrow credit from the other member, can't create credit, and can't be transferred credit. These restrictions are set in the smart contract. To do these transactions again, the three of them have to get token, deposit it to Hako, and reduce all of their debt. So, Bob needs 100 token, Carol needs 200 token, and Dave needs 400 token. In total, there is 700 demand for token.
+In the table 9, Bob has 100 debt, Carol has 200 debt, and Dave has 400 debt. Because of these debt, they can't withdraw their token from Hako, can't borrow credit from other member, can't create credit, and can't be transferred credit. These restrictions are set in the smart contract. To do these transactions again, the three of them have to get token, deposit it to Hako, and reduce all of their debt. So, Bob needs 100 token, Carol needs 200 token, and Dave needs 400 token. In total, there is 700 demand for token.
 
 Token Demand = +700  
 Token Supply = +700  

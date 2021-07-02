@@ -68,7 +68,7 @@ If hako doesn't have enough token, he can't withdraw all his token. So, in this 
 Transferer member can't transfer credit to non-member account.  
 Transferer member can't transfer credit to the member who has debt to Hako.  
 
-## registerBorrowValueDuration
+## registerBorrowing
 
  = Member registers the amount of credit( to Hako) that he wants to borrow and the duration of lending that he wants to borrow.
 
@@ -98,7 +98,7 @@ In the case that the debtor has not enough credit, in place of him, hako pays ba
 
 The debtor can return his debt even if the duration is yet to be passed.  
 
-## creditCreationByMember
+## createCredit
 
  = Member creates credit.
 
@@ -108,13 +108,13 @@ Member can't create more credit than the upper limit.
 Member can't create more credit than his net assets( = token + credit - debt).  
 If the member owes debt to hako, he can't create credit.  
 
-## arrangement
+## reduceDebt
 
  = Member who has debt to Hako reduces his debt by reducing his credit.
 
 Member's credit to Hako decreases and Hako's debt decreases too.  
 Member's debt to Hako decreases and Hako's credit decreases too.  
-This arrangement is the opposite operation of credit-creation.  
+This is the opposite operation of credit-creation.  
 
 Prev...  
 → [Main features of Hako Finance](https://github.com/okada-shun/hako-finance/blob/master/docs/MainFeatures.md)  
