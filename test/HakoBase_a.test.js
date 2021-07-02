@@ -8,7 +8,7 @@ const time = require("@openzeppelin/test-helpers/src/time");
 contract('HakoBase_a', ([alice, bob, carol, dave, ...accounts]) => {
 
   beforeEach(async function () {
-    this.hako = await Hako.new(1000, 500, 'HakoExample', 'HKEX', 0, {from: alice});
+    this.hako = await Hako.new(1000, 500, 'HakoTokenExample', 'HTE', 0, {from: alice});
   });
 
   it('should have correct balanceOf hako', async function () {
@@ -23,10 +23,10 @@ contract('HakoBase_a', ([alice, bob, carol, dave, ...accounts]) => {
       await this.hako.transfer(carol, 200, {from: alice});
       await this.hako.transfer(dave, 100, {from: alice});
       await this.hako.joinHako(300, {from: bob});
-      //balance of bob's token is 0 (= 300 - 300)
-      //balance of hako's token is 300 (= 0 + 300)
-      //creditToHako of bob is 300
-      //debtToBob of hako is 300 (bob's credit to hako = hako's debt to bob)
+      //balance of bob's token is 0 (= 300 - 300).
+      //balance of hako's token is 300 (= 0 + 300).
+      //creditToHako of bob is 300.
+      //debtToBob of hako is 300 (bob's credit to hako = hako's debt to bob).
       const balanceOfBob = await this.hako.balanceOf(bob);
       const balanceOfHako = await this.hako.balanceOfHako();
       const creditToHakoOfBob = await this.hako.creditToHakoOf(bob);
@@ -48,11 +48,11 @@ contract('HakoBase_a', ([alice, bob, carol, dave, ...accounts]) => {
       await this.hako.joinHako(300, {from: bob});
       await this.hako.joinHako(200, {from: carol});
       await this.hako.joinHako(100, {from: dave});
-      //balance of hako's token is 600 (= 0 + 300 + 200 + 100)
-      //creditToHako of bob is 300
-      //creditToHako of carol is 200
-      //creditToHako of dave is 100
-      //debtToMembers of hako is 600 (= 300 + 200 + 100)
+      //balance of hako's token is 600 (= 0 + 300 + 200 + 100).
+      //creditToHako of bob is 300.
+      //creditToHako of carol is 200.
+      //creditToHako of dave is 100.
+      //debtToMembers of hako is 600 (= 300 + 200 + 100).
       //hako's debt to members = bob's, carol's, dave's (members') credit to hako
       const balanceOfHako = await this.hako.balanceOfHako();
       const debtToMembersOfHako = await this.hako.debtOfHako();
@@ -73,7 +73,7 @@ contract('HakoBase_a', ([alice, bob, carol, dave, ...accounts]) => {
       await this.hako.transfer(carol, 200, {from: alice});
       await this.hako.transfer(dave, 100, {from: alice});
       await this.hako.joinHako(300, {from: bob});
-      //bob has already been a hako member
+      //bob has already been a hako member.
       await utils.shouldThrow(this.hako.joinHako(300, {from: bob}));  
     });
 
@@ -81,15 +81,15 @@ contract('HakoBase_a', ([alice, bob, carol, dave, ...accounts]) => {
       await this.hako.transfer(bob, 300, {from: alice});
       await this.hako.transfer(carol, 200, {from: alice});
       await this.hako.transfer(dave, 100, {from: alice});
-      //alice is hako owner
+      //alice is hako owner.
       await utils.shouldThrow(this.hako.joinHako(400, {from: alice}));
     });
 
-    it('should not allow accounts to deposit more token than they have when joining hako', async function () {
+    it('should not allow accounts to deposit more token than they have', async function () {
       await this.hako.transfer(bob, 300, {from: alice});
       await this.hako.transfer(carol, 200, {from: alice});
       await this.hako.transfer(dave, 100, {from: alice}); 
-      //bob has only 300 token  
+      //bob has only 300 token.
       await utils.shouldThrow(this.hako.joinHako(400, {from: bob}));
     });
 
@@ -114,10 +114,10 @@ contract('HakoBase_a', ([alice, bob, carol, dave, ...accounts]) => {
       await this.hako.transfer(dave, 100, {from: alice});
       await this.hako.joinHako(300, {from: bob});
       await this.hako.leaveHako({from: bob});
-      //balance of bob's token is 300 (= 300 - 300 + 300)
-      //balance of hako's token is 0 (= 0 + 300 - 300)
-      //creditToHako of bob is 0 (= 300 - 300)
-      //debtToBob of hako is 0 (bob's credit to hako = hako's debt to bob)
+      //balance of bob's token is 300 (= 300 - 300 + 300).
+      //balance of hako's token is 0 (= 0 + 300 - 300).
+      //creditToHako of bob is 0 (= 300 - 300).
+      //debtToBob of hako is 0 (bob's credit to hako = hako's debt to bob).
       const balanceOfBob = await this.hako.balanceOf(bob);
       const balanceOfHako = await this.hako.balanceOfHako();
       const creditToHakoOfBob = await this.hako.creditToHakoOf(bob);
@@ -139,17 +139,17 @@ contract('HakoBase_a', ([alice, bob, carol, dave, ...accounts]) => {
       await this.hako.joinHako(300, {from: bob});
       await this.hako.joinHako(200, {from: carol});
       await this.hako.joinHako(100, {from: dave});
-      //bob and carol leave hako
+      //bob and carol leave hako.
       await this.hako.leaveHako({from: bob});
       await this.hako.leaveHako({from: carol});
-      //balance of bob's token is 300 (= 300 - 300 + 300)
-      //balance of carol's token is 200 (= 200 - 200 + 200)
-      //balance of dave's token is 0 (bob does not leave hako)
-      //balance of hako's token is 100 (= 600 - 300 - 200)
-      //creditToHako of bob is 0 (= 300 - 300)
-      //creditToHako of carol is 0 (= 200 - 200)
-      //creditToHako of dave is 100
-      //debtToMembers of hako is 100 (= 0 + 0 + 100)
+      //balance of bob's token is 300 (= 300 - 300 + 300).
+      //balance of carol's token is 200 (= 200 - 200 + 200).
+      //balance of dave's token is 0 (bob does not leave hako).
+      //balance of hako's token is 100 (= 600 - 300 - 200).
+      //creditToHako of bob is 0 (= 300 - 300).
+      //creditToHako of carol is 0 (= 200 - 200).
+      //creditToHako of dave is 100.
+      //debtToMembers of hako is 100 (= 0 + 0 + 100).
       //hako's debt to members = bob's, carol's, dave's (members') credit to hako
       const balanceOfBob = await this.hako.balanceOf(bob);
       const balanceOfCarol = await this.hako.balanceOf(carol);
@@ -182,10 +182,10 @@ contract('HakoBase_a', ([alice, bob, carol, dave, ...accounts]) => {
       await this.hako.transfer(carol, 200, {from: alice});
       await this.hako.transfer(dave, 100, {from: alice});
       await this.hako.joinHako(100, {from: bob});
-      //carol is not a hako member
+      //carol is not a hako member.
       await utils.shouldThrow(this.hako.leaveHako({from: carol}));
       await this.hako.leaveHako({from: bob});
-      //bob left hako, so he is not a hako member
+      //bob left hako, so he is not a hako member.
       await utils.shouldThrow(this.hako.leaveHako({from: bob}));
     });
 
@@ -196,16 +196,16 @@ contract('HakoBase_a', ([alice, bob, carol, dave, ...accounts]) => {
       await this.hako.joinHako(300, {from: bob});
       await this.hako.joinHako(200, {from: carol});
       await this.hako.joinHako(100, {from: dave});
-      await this.hako.creditCreationByMember(100, {from: carol});
-      //carol has 100 debtToHako
+      await this.hako.createCredit(100, {from: carol});
+      //carol has 100 debtToHako.
       await utils.shouldThrow(this.hako.leaveHako({from: carol}));
-      await this.hako.arrangement(100, {from: carol});
-      await this.hako.registerBorrowValueDuration(100, 60, {from: carol});
+      await this.hako.reduceDebt(100, {from: carol});
+      await this.hako.registerBorrowing(100, 60, {from: carol});
       await this.hako.lendCredit(carol, 100, 60, {from: bob});
       await this.hako.transferCredit(dave, 300, {from: carol});
       await time.increase(time.duration.seconds(60));
       await this.hako.collectDebtFrom(carol, 1, {from: bob});
-      //carol has 100 debtToHako
+      //carol has 100 debtToHako.
       await utils.shouldThrow(this.hako.leaveHako({from: carol}));
     });
 
@@ -216,9 +216,9 @@ contract('HakoBase_a', ([alice, bob, carol, dave, ...accounts]) => {
       await this.hako.joinHako(300, {from: bob});
       await this.hako.joinHako(200, {from: carol});
       await this.hako.joinHako(100, {from: dave});
-      await this.hako.registerBorrowValueDuration(100, 60, {from: carol});
+      await this.hako.registerBorrowing(100, 60, {from: carol});
       await this.hako.lendCredit(carol, 100, 60, {from: bob});
-      //carol has 100 debtToMember(= debt to bob)
+      //carol has 100 debtToMember(= debt to bob).
       await utils.shouldThrow(this.hako.leaveHako({from: carol}));
     });
 
@@ -229,9 +229,9 @@ contract('HakoBase_a', ([alice, bob, carol, dave, ...accounts]) => {
       await this.hako.joinHako(300, {from: bob});
       await this.hako.joinHako(200, {from: carol});
       await this.hako.joinHako(100, {from: dave});
-      await this.hako.registerBorrowValueDuration(100, 60, {from: carol});
+      await this.hako.registerBorrowing(100, 60, {from: carol});
       await this.hako.lendCredit(carol, 100, 60, {from: bob});
-      //bob has 100 creditToMember(= credit to carol)
+      //bob has 100 creditToMember(= credit to carol).
       await utils.shouldThrow(this.hako.leaveHako({from: bob}));
     });
 

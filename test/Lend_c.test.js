@@ -14,23 +14,23 @@ const time = require("@openzeppelin/test-helpers/src/time");
 contract('Lend_c', ([alice, bob, carol, dave, ...accounts]) => {
   
   beforeEach(async function () {
-    this.hako = await Hako.new(1000, 500, 'HakoExample', 'HKEX', 0, {from: alice});
+    this.hako = await Hako.new(1000, 500, 'HakoTokenExample', 'HTE', 0, {from: alice});
   });
 
-  describe('getLendRecords', () => {
+  describe('lendRecordOf', () => {
 
-    it('should get lendRecords information', async function () {
+    it('should get lendRecord data', async function () {
       await this.hako.transfer(bob, 300, {from: alice});
       await this.hako.transfer(carol, 200, {from: alice});
       await this.hako.transfer(dave, 100, {from: alice});
       await this.hako.joinHako(300, {from: bob});
       await this.hako.joinHako(200, {from: carol});
       await this.hako.joinHako(100, {from: dave});
-      await this.hako.registerBorrowValueDuration(100, 60, {from: carol});
+      await this.hako.registerBorrowing(100, 60, {from: carol});
       const {logs} = 
         await this.hako.lendCredit(carol, 100, 60, {from: bob});
       const event = await expectEvent.inLogs(logs, 'LendCredit');
-      const lendRecords = await this.hako.getLendRecords(1, {from: alice});
+      const lendRecords = await this.hako.lendRecordOf(1, {from: alice});
       assert.equal(lendRecords[0], 1);
       assert.equal(lendRecords[1], bob);
       assert.equal(lendRecords[2], carol);
@@ -51,9 +51,9 @@ contract('Lend_c', ([alice, bob, carol, dave, ...accounts]) => {
       await this.hako.joinHako(300, {from: bob});
       await this.hako.joinHako(200, {from: carol});
       await this.hako.joinHako(100, {from: dave});
-      await this.hako.registerBorrowValueDuration(300, 60, {from: bob});
-      await this.hako.registerBorrowValueDuration(200, 60, {from: carol});
-      await this.hako.registerBorrowValueDuration(100, 60, {from: dave});
+      await this.hako.registerBorrowing(300, 60, {from: bob});
+      await this.hako.registerBorrowing(200, 60, {from: carol});
+      await this.hako.registerBorrowing(100, 60, {from: dave});
       await this.hako.lendCredit(carol, 100, 60, {from: bob});
       await this.hako.lendCredit(dave, 50, 60, {from: bob});
       await this.hako.lendCredit(dave, 50, 60, {from: carol});

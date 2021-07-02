@@ -8,7 +8,7 @@ const time = require("@openzeppelin/test-helpers/src/time");
 contract('HakoOwner', ([alice, bob, carol, dave, ...accounts]) => {
 
   beforeEach(async function () {
-    this.hako = await Hako.new(1000, 500, 'HakoExample', 'HKEX', 0, {from: alice});
+    this.hako = await Hako.new(1000, 500, 'HakoTokenExample', 'HTE', 0, {from: alice});
   });
 
   it('should have correct hakoOwner', async function () {
@@ -84,24 +84,24 @@ contract('HakoOwner', ([alice, bob, carol, dave, ...accounts]) => {
       await this.hako.joinHako(200, {from: carol});
       await this.hako.joinHako(100, {from: dave});
       await this.hako.getReward({from: alice});
-      //balance of hako is 594 (= 600 - 600/100)
-      //balance of alice is 406 (= 400 + 600/100)
+      //balance of hako is 594 (= 600 - 600/100).
+      //balance of alice is 406 (= 400 + 600/100).
       const balanceOfHakoA = await this.hako.balanceOfHako();
       const balanceOfAliceA = await this.hako.balanceOf(alice);
       assert.equal(balanceOfHakoA, 594);
       assert.equal(balanceOfAliceA, 406);
       await time.increase(time.duration.seconds(86400));
       await this.hako.getReward({from: alice});
-      //balance of hako is 589 (= 594 - 594/100)
-      //balance of alice is 411 (= 406 + 594/100)
+      //balance of hako is 589 (= 594 - 594/100).
+      //balance of alice is 411 (= 406 + 594/100).
       const balanceOfHakoB = await this.hako.balanceOfHako();
       const balanceOfAliceB = await this.hako.balanceOf(alice);
       assert.equal(balanceOfHakoB, 589);
       assert.equal(balanceOfAliceB, 411);
       await time.increase(time.duration.seconds(86400));
       await this.hako.getReward({from: alice});
-      //balance of hako is 584 (= 589 - 589/100)
-      //balance of alice is 416 (= 411 + 589/100)
+      //balance of hako is 584 (= 589 - 589/100).
+      //balance of alice is 416 (= 411 + 589/100).
       const balanceOfHakoC = await this.hako.balanceOfHako();
       const balanceOfAliceC = await this.hako.balanceOf(alice);
       assert.equal(balanceOfHakoC, 584);
